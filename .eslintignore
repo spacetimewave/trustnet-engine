@@ -2,3 +2,5 @@ dist
 package-lock.json
 node_modules
 vite.config.ts
+jest.config.ts
+jest.ci-config.ts

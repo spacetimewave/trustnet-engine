@@ -84,6 +84,19 @@ Install `eslint-config-prettier` to turn-off eslint rules that are unnecessary o
 pnpm add -D eslint-config-prettier eslint-plugin-prettier
 ```
 
+Add unit tests.
+
+```console
+pnpm add -D jest @types/jest ts-jest ts-node
+```
+
+| Package     | Purpose                                       |
+| ----------- | --------------------------------------------- |
+| jest        | Test runner                                   |
+| ts-jest     | For running jest in typescript supported app. |
+| ts-node     | For creating jest config file in TS extension |
+| @types/jest | Types library for Jest                        |
+
 ## Technologies
 
 | Feature              | Technology |
@@ -93,3 +106,4 @@ pnpm add -D eslint-config-prettier eslint-plugin-prettier
 | Programming language | Typescript |
 | Basic linting        | ESLint     |
 | Code formatting      | Prettier   |
+| Testing              | TS Jest    |
