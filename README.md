@@ -97,13 +97,23 @@ pnpm add -D jest @types/jest ts-jest ts-node
 | ts-node     | For creating jest config file in TS extension |
 | @types/jest | Types library for Jest                        |
 
+Add commit lint and pre-commit hooks.
+
+```console
+pnpm add -D @commitlint/cli @commitlint/config-conventional
+pnpm add -D husky lint-staged
+```
+
 ## Technologies
 
-| Feature              | Technology |
-| -------------------- | ---------- |
-| Package manager      | PNPM       |
-| Package bundler      | Vite       |
-| Programming language | Typescript |
-| Basic linting        | ESLint     |
-| Code formatting      | Prettier   |
-| Testing              | TS Jest    |
+| Feature                   | Technology  |
+| ------------------------- | ----------- |
+| Package manager           | PNPM        |
+| Package bundler           | Vite        |
+| Programming language      | Typescript  |
+| Basic linting             | ESLint      |
+| Code formatting           | Prettier    |
+| Testing                   | TS Jest     |
+| Pre-commit hook validator | Husky       |
+| Linting only staged files | lint-staged |
+| Lint git commit messages  | commitlint  |
