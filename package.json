@@ -10,8 +10,7 @@
 		"build": "tsc && vite build",
 		"preview": "vite preview",
 		"test": "jest",
-		"test:coverage": "jest --coverage",
-		"test:ci": "jest --coverage --config='./jest.ci-config.ts'"
+		"test:coverage": "jest --coverage"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^19.2.1",
