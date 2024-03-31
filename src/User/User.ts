@@ -14,12 +14,12 @@ export class User {
 	public providers: string[] = []
 
 	public web3: Web3
-	public blockchainNode: string = 'http://localhost:7545'
+	public BLOCKCHAIN_DEFAULT_PROVIDER: string = 'http://localhost:7545'
 
-	constructor(publicKey: string, privateKey: string | undefined = undefined) {
+	constructor(publicKey: string, privateKey: string | undefined = undefined, node: string | undefined) {
 		this.publicKey = publicKey
 		this.privateKey = privateKey
-		this.web3 = new Web3(this.blockchainNode)
+		this.web3 = new Web3(node ?? this.BLOCKCHAIN_DEFAULT_PROVIDER)
 	}
 
 	public async getAccountProviders(): Promise<void> {}
