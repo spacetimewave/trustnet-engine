@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 import { Keccak } from 'sha3'
 
 export class Cryptography {
