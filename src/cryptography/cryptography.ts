@@ -1,28 +1,43 @@
 /* eslint-disable object-shorthand */
 import { Web3 } from 'web3'
+import { Keccak } from 'sha3'
 
 export class Cryptography {
 
 	public static BLOCKCHAIN_DEFAULT_PROVIDER: string = 'http://localhost:7545'
 	public static web3: Web3 = new Web3(this.BLOCKCHAIN_DEFAULT_PROVIDER)
 	
-	public static hash(message: string): string | undefined {
-		const hash = this.web3.utils.sha3(message)
-		return hash
+	public static async generateSignatureKeyPair(): Promise<CryptoKeyPair> {
+		const keypair = await crypto.subtle.generateKey(
+			{
+			  name: "ECDSA",
+			  namedCurve: "P-256K",
+			},
+			true,
+			["sign", "verify"]
+		  );
+	
+		return keypair;
+	}
+	
+	public static async hash(message: string): Promise<string> {
+		const hash = new Keccak(256);
+		hash.update(message);
+		return "0x"+hash.digest('hex')
 	}
 
-	public static async sign(message: string, privateKey: string): Promise<string> {
+	public static async sign(message: string, privateKey: CryptoKey): Promise<ArrayBuffer> {
 		try {
 			if (privateKey === undefined) {
 				throw Error()
 			}
 
-			const hash = this.hash(message)
+			const hash = await this.hash(message)
 			if (hash === undefined) {
 				throw Error()
 			}
 
-			const signature = this.web3.eth.accounts.sign(hash, privateKey).signature
+			const signature = await crypto.subtle.sign("ECDSA", privateKey, this.arrayBufferEncode(hash))
 
 			return signature
 		} catch (err) {
@@ -30,7 +45,23 @@ export class Cryptography {
 		}
 	}
 
-	public static async generateKeyPair(): Promise<CryptoKeyPair> {
+	public static async verify(message: string, signature: ArrayBuffer, publicKey: CryptoKey): Promise<boolean> {
+		try {
+
+			const hash = await this.hash(message)
+			if (hash === undefined) {
+				throw Error()
+			}
+
+			const verification = await crypto.subtle.verify("ECDSA", publicKey, signature, this.arrayBufferEncode(hash))
+			
+			return verification
+		} catch (err) {
+			throw Error()
+		}
+	}
+
+	public static async generateEncryptionKeyPair(): Promise<CryptoKeyPair> {
 		const keypair = await crypto.subtle.generateKey(
 			{
 			  name: "RSA-OAEP",
@@ -62,5 +93,15 @@ export class Cryptography {
 		  );
 		const decryptedtext = new TextDecoder().decode(decrypted);
 		return decryptedtext;
+	}
+
+	public static arrayBufferEncode(str: string): ArrayBuffer {
+		const encoder = new TextEncoder();
+    	return encoder.encode(str).buffer;
+	}
+
+	public static arrayBufferDecode(buffer: ArrayBuffer): string {
+		const decoder = new TextDecoder();
+		return decoder.decode(buffer);
 	}
 }
