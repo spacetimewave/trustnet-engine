@@ -7,7 +7,7 @@ describe('Cryptography module test suite', () => {
 		)
 	})
 
-	it('Sign e2e test', async () => {
+	it('Signature e2e test', async () => {
 		const keyPair = await Cryptography.generateSignatureKeyPair()
 		const publicKey = keyPair.publicKey
 		const privateKey = keyPair.privateKey
