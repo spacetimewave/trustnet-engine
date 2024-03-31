@@ -13,9 +13,8 @@ describe('Cryptography module test suite', () => {
 		const privateKey = keyPair.privateKey
 		
 		const message = "Message"
-		const encryptedMessage = await Cryptography.encrypt(publicKey, message)
-		const decryptedMessage = await Cryptography.decrypt(privateKey, encryptedMessage)
-		console.log(message, " | ", decryptedMessage)
+		const encryptedMessage = await Cryptography.encrypt(message, publicKey)
+		const decryptedMessage = await Cryptography.decrypt(encryptedMessage, privateKey)
 		expect(decryptedMessage).toEqual(message)
 	})
 

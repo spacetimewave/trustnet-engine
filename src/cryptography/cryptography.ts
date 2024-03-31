@@ -45,20 +45,20 @@ export class Cryptography {
 		return keypair;
 	}
 
-	public static async encrypt(publicKey: CryptoKey, plaintext: string): Promise<ArrayBuffer> {
+	public static async encrypt(message: string, publicKey: CryptoKey, ): Promise<ArrayBuffer> {
 		const encryptedtext = await crypto.subtle.encrypt(
 			{name: "RSA-OAEP"},
 			publicKey,
-			new TextEncoder().encode(plaintext)
+			new TextEncoder().encode(message)
 		  );
 		return encryptedtext;
 	}
 
-	public static async decrypt(privateKey:CryptoKey, encryptedtext:BufferSource): Promise<string> {
+	public static async decrypt(encryptedMessage:BufferSource, privateKey:CryptoKey): Promise<string> {
 		const decrypted = await crypto.subtle.decrypt(
 			{name: "RSA-OAEP"},
 			privateKey,
-			encryptedtext
+			encryptedMessage
 		  );
 		const decryptedtext = new TextDecoder().decode(decrypted);
 		return decryptedtext;
