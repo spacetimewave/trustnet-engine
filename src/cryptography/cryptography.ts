@@ -1,11 +1,7 @@
 /* eslint-disable object-shorthand */
-import { Web3 } from 'web3'
 import { Keccak } from 'sha3'
 
 export class Cryptography {
-
-	public static BLOCKCHAIN_DEFAULT_PROVIDER: string = 'http://localhost:7545'
-	public static web3: Web3 = new Web3(this.BLOCKCHAIN_DEFAULT_PROVIDER)
 	
 	public static async generateSignatureKeyPair(): Promise<CryptoKeyPair> {
 		const keypair = await crypto.subtle.generateKey(
