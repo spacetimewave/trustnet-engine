@@ -7,12 +7,11 @@ export class Cryptography {
 		const keypair = await crypto.subtle.generateKey(
 			{
 			  name: "ECDSA",
-			  namedCurve: "P-256K",
+			  namedCurve: "P-256",
 			},
 			true,
 			["sign", "verify"]
 		  );
-	
 		return keypair;
 	}
 	
@@ -24,17 +23,11 @@ export class Cryptography {
 
 	public static async sign(message: string, privateKey: CryptoKey): Promise<ArrayBuffer> {
 		try {
-			if (privateKey === undefined) {
-				throw Error()
-			}
-
 			const hash = await this.hash(message)
-			if (hash === undefined) {
-				throw Error()
-			}
-
-			const signature = await crypto.subtle.sign("ECDSA", privateKey, this.arrayBufferEncode(hash))
-
+			const signature = await crypto.subtle.sign({
+				name: "ECDSA",
+				hash: "SHA-256",
+			  }, privateKey, this.arrayBufferEncode(hash))
 			return signature
 		} catch (err) {
 			throw Error()
@@ -45,12 +38,10 @@ export class Cryptography {
 		try {
 
 			const hash = await this.hash(message)
-			if (hash === undefined) {
-				throw Error()
-			}
-
-			const verification = await crypto.subtle.verify("ECDSA", publicKey, signature, this.arrayBufferEncode(hash))
-			
+			const verification = await crypto.subtle.verify({
+				name: "ECDSA",
+				hash: "SHA-256",
+			  }, publicKey, signature, this.arrayBufferEncode(hash))
 			return verification
 		} catch (err) {
 			throw Error()
@@ -68,7 +59,6 @@ export class Cryptography {
 			true,
 			["encrypt", "decrypt"]
 		  );
-	
 		return keypair;
 	}
 
