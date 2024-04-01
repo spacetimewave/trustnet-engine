@@ -1,4 +1,4 @@
-import { Cryptography } from './cryptography'
+import { Cryptography } from '.'
 
 describe('Cryptography module test suite', () => {
 	it('Hash unit test', async () => {
@@ -11,9 +11,13 @@ describe('Cryptography module test suite', () => {
 		const keyPair = await Cryptography.generateSignatureKeyPair()
 		const publicKey = keyPair.publicKey
 		const privateKey = keyPair.privateKey
-		const message = "Message"
+		const message = 'Message'
 		const signature = await Cryptography.sign(message, privateKey)
-		const verification = await Cryptography.verify(message, signature, publicKey)
+		const verification = await Cryptography.verify(
+			message,
+			signature,
+			publicKey,
+		)
 		expect(verification).toEqual(true)
 	})
 
@@ -21,11 +25,13 @@ describe('Cryptography module test suite', () => {
 		const keyPair = await Cryptography.generateEncryptionKeyPair()
 		const publicKey = keyPair.publicKey
 		const privateKey = keyPair.privateKey
-		
-		const message = "Message"
+
+		const message = 'Message'
 		const encryptedMessage = await Cryptography.encrypt(message, publicKey)
-		const decryptedMessage = await Cryptography.decrypt(encryptedMessage, privateKey)
+		const decryptedMessage = await Cryptography.decrypt(
+			encryptedMessage,
+			privateKey,
+		)
 		expect(decryptedMessage).toEqual(message)
 	})
-
 })
