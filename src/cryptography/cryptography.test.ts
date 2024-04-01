@@ -11,7 +11,6 @@ describe('Cryptography module test suite', () => {
 		const keyPair = await Cryptography.generateSignatureKeyPair()
 		const publicKey = keyPair.publicKey
 		const privateKey = keyPair.privateKey
-		
 		const message = "Message"
 		const signature = await Cryptography.sign(message, privateKey)
 		const verification = await Cryptography.verify(message, signature, publicKey)

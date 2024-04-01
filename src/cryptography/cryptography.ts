@@ -1,6 +1,12 @@
 import { Keccak } from 'sha3'
 
 export class Cryptography {
+		
+	public static async hash(message: string): Promise<string> {
+		const hash = new Keccak(256);
+		hash.update(message);
+		return "0x"+hash.digest('hex')
+	}
 	
 	public static async generateSignatureKeyPair(): Promise<CryptoKeyPair> {
 		const keypair = await crypto.subtle.generateKey(
@@ -13,34 +19,27 @@ export class Cryptography {
 		  );
 		return keypair;
 	}
-	
-	public static async hash(message: string): Promise<string> {
-		const hash = new Keccak(256);
-		hash.update(message);
-		return "0x"+hash.digest('hex')
-	}
 
-	public static async sign(message: string, privateKey: CryptoKey): Promise<ArrayBuffer> {
+	public static async sign(message: string, privateKey: CryptoKey): Promise<string> {
 		try {
 			const hash = await this.hash(message)
 			const signature = await crypto.subtle.sign({
 				name: "ECDSA",
 				hash: "SHA-256",
-			  }, privateKey, this.arrayBufferEncode(hash))
-			return signature
+			  }, privateKey, this.stoab(hash))
+			return this.abtos(signature)
 		} catch (err) {
 			throw Error()
 		}
 	}
 
-	public static async verify(message: string, signature: ArrayBuffer, publicKey: CryptoKey): Promise<boolean> {
+	public static async verify(message: string, signature: string, publicKey: CryptoKey): Promise<boolean> {
 		try {
-
 			const hash = await this.hash(message)
 			const verification = await crypto.subtle.verify({
 				name: "ECDSA",
 				hash: "SHA-256",
-			  }, publicKey, signature, this.arrayBufferEncode(hash))
+			  }, publicKey, this.stoab(signature), this.stoab(hash))
 			return verification
 		} catch (err) {
 			throw Error()
@@ -80,13 +79,11 @@ export class Cryptography {
 		return decryptedtext;
 	}
 
-	public static arrayBufferEncode(str: string): ArrayBuffer {
-		const encoder = new TextEncoder();
-    	return encoder.encode(str).buffer;
+	public static abtos(buffer: ArrayBuffer): string {
+		return String.fromCharCode.apply(null, [... new Uint8Array(buffer)])
 	}
-
-	public static arrayBufferDecode(buffer: ArrayBuffer): string {
-		const decoder = new TextDecoder();
-		return decoder.decode(buffer);
+	  
+	public static stoab(str: string): ArrayBuffer {
+		return Uint8Array.from(str, x => x.charCodeAt(0)).buffer
 	}
 }
