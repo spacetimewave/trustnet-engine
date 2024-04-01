@@ -1,6 +1,7 @@
 import { Web3 } from 'web3'
 import type { IBlockHeader } from '../models/IBlockHeader'
 import { Cryptography } from '../cryptography'
+import { IBlock } from '../models/IBlock'
 
 export class API {
 	public web3: Web3
@@ -74,7 +75,20 @@ export class API {
 		return await this.verify(information, header.signature ?? '', publicKey)
 	}
 
-	public async verifyBlock(): Promise<void> {}
+	public static async verifyBlockContent(block: IBlock): Promise<boolean> {
+		return (await this.hash(block.content)) === block.header.output_hash
+	}
+
+	public static async verifyBlock(block: IBlock): Promise<boolean> {
+		return (
+			(await this.verifyBlockContent(block)) &&
+			(await this.verifyBlockHeaderSignature(
+				block.header,
+				block.header.address,
+			))
+		)
+	}
+
 	public async getAccountProviders(): Promise<void> {}
 	public async getUsername(): Promise<void> {}
 	public async getGenesisBlock(): Promise<void> {}
