@@ -1,9 +1,7 @@
-export interface IBlockHeader {
+export interface ISeedBlock {
 	version: number
-	output_hash: string
 	address: string
 	public_key: string
-	block_id: number
 	update_id: number
 	signature: string | undefined
 }
