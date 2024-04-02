@@ -1,16 +1,9 @@
-import { Web3 } from 'web3'
-import type { IBlockHeader } from '../models/IBlockHeader'
 import { Cryptography } from '../cryptography'
-import { IBlock } from '../models/IBlock'
+import type { IBlock } from '../models/IBlock'
+import type { IBlockHeader } from '../models/IBlockHeader'
+import type { ISeedBlock } from '../models/ISeedBlock'
 
 export class API {
-	public web3: Web3
-	public BLOCKCHAIN_DEFAULT_PROVIDER: string = 'http://localhost:7545'
-
-	constructor(provider: string | undefined) {
-		this.web3 = new Web3(provider ?? this.BLOCKCHAIN_DEFAULT_PROVIDER)
-	}
-
 	public static async hash(message: string): Promise<string> {
 		return await Cryptography.hash(message)
 	}
@@ -33,6 +26,7 @@ export class API {
 	public static async generateBlockHeader(
 		content: string,
 		address: string,
+		publicKey: string,
 		blockId: number,
 		updateId: number,
 		version: number = 1,
@@ -41,9 +35,26 @@ export class API {
 			version,
 			output_hash: await this.hash(JSON.stringify(content)),
 			address,
+			public_key: publicKey,
 			block_id: blockId,
 			update_id: updateId,
-			signature: null,
+			signature: undefined,
+		}
+		return header
+	}
+
+	public static async generateSeedBlock(
+		address: string,
+		publicKey: string,
+		updateId: number,
+		version: number = 1,
+	): Promise<ISeedBlock> {
+		const header: ISeedBlock = {
+			version,
+			address,
+			public_key: publicKey,
+			update_id: updateId,
+			signature: undefined,
 		}
 		return header
 	}
@@ -56,36 +67,67 @@ export class API {
 			header.version +
 			header.output_hash +
 			header.address +
+			header.public_key +
 			header.block_id +
 			header.update_id
 		header.signature = await this.sign(information, privateKey)
 		return header
 	}
 
+	public static async signSeedBlock(
+		block: ISeedBlock,
+		privateKey: string,
+	): Promise<ISeedBlock> {
+		const information =
+			block.version + block.address + block.public_key + block.update_id
+		block.signature = await this.sign(information, privateKey)
+		return block
+	}
+
 	public static async verifyBlockHeaderSignature(
 		header: IBlockHeader,
-		publicKey: string,
 	): Promise<boolean> {
 		const information =
 			header.version +
 			header.output_hash +
 			header.address +
+			header.public_key +
 			header.block_id +
 			header.update_id
-		return await this.verify(information, header.signature ?? '', publicKey)
+		return await this.verify(
+			information,
+			header.signature ?? '',
+			header.public_key,
+		)
+	}
+
+	public static async verifySeedBlockSignature(
+		block: ISeedBlock,
+	): Promise<boolean> {
+		const information =
+			block.version + block.address + block.public_key + block.update_id
+		return await this.verify(information, block.signature ?? '', block.address)
 	}
 
 	public static async verifyBlockContent(block: IBlock): Promise<boolean> {
 		return (await this.hash(block.content)) === block.header.output_hash
 	}
 
+	public static verifyBlockAddress(block: IBlock): boolean {
+		return block.header.address === block.metadata.seed_block?.address
+	}
+
+	public static verifyBlockPublicKey(block: IBlock): boolean {
+		return block.header.public_key === block.metadata.seed_block?.public_key
+	}
+
 	public static async verifyBlock(block: IBlock): Promise<boolean> {
 		return (
 			(await this.verifyBlockContent(block)) &&
-			(await this.verifyBlockHeaderSignature(
-				block.header,
-				block.header.address,
-			))
+			this.verifyBlockAddress(block) &&
+			this.verifyBlockPublicKey(block) &&
+			(await this.verifyBlockHeaderSignature(block.header)) &&
+			(await this.verifySeedBlockSignature(block.metadata.seed_block))
 		)
 	}
 
