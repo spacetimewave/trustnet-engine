@@ -2,7 +2,7 @@ import { Cryptography } from '.'
 
 describe('Cryptography module test suite', () => {
 	it('Hash unit test', async () => {
-		expect(await Cryptography.hash('Message')).toEqual(
+		expect(Cryptography.hash('Message')).toEqual(
 			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35',
 		)
 	})
