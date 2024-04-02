@@ -1,11 +1,17 @@
 import { Cryptography } from '../cryptography'
 import type { IBlock } from '../models/IBlock'
 import type { IBlockHeader } from '../models/IBlockHeader'
+import type { IBlockMetadata } from '../models/IBlockMetadata'
+import type { IKeyPair } from '../models/IKeyPair'
 import type { ISeedBlock } from '../models/ISeedBlock'
 
 export class API {
 	public static async hash(message: string): Promise<string> {
-		return await Cryptography.hash(message)
+		return Cryptography.hash(message)
+	}
+
+	public static async generateSignatureKeyPair(): Promise<IKeyPair> {
+		return await Cryptography.generateSignatureKeyPair()
 	}
 
 	public static async sign(
@@ -110,7 +116,10 @@ export class API {
 	}
 
 	public static async verifyBlockContent(block: IBlock): Promise<boolean> {
-		return (await this.hash(block.content)) === block.header.output_hash
+		return (
+			(await this.hash(JSON.stringify(block.content))) ===
+			block.header.output_hash
+		)
 	}
 
 	public static verifyBlockAddress(block: IBlock): boolean {
@@ -119,6 +128,28 @@ export class API {
 
 	public static verifyBlockPublicKey(block: IBlock): boolean {
 		return block.header.public_key === block.metadata.seed_block?.public_key
+	}
+
+	public static generateMetadata(seedBlock: ISeedBlock): IBlockMetadata {
+		const metadata: IBlockMetadata = { seed_block: seedBlock }
+		return metadata
+	}
+
+	public static generateBlock(
+		header: IBlockHeader,
+		content: string,
+		metadata: IBlockMetadata,
+	): IBlock {
+		const block: IBlock = { header, content, metadata }
+		return block
+	}
+
+	public static async signBlock(
+		block: IBlock,
+		privateKey: string,
+	): Promise<IBlock> {
+		block.header = await this.signBlockHeader(block.header, privateKey)
+		return block
 	}
 
 	public static async verifyBlock(block: IBlock): Promise<boolean> {
