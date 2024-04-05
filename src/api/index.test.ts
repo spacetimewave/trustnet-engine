@@ -107,7 +107,7 @@ describe('API module test suite', () => {
 		const blockMetadata = API.generateMetadata(signedSeedBlock)
 		const block = API.generateBlock(signedBlockHeader, content, blockMetadata)
 
-		console.log(block)
+		// console.log(block)
 		expect(await API.verifyBlock(block)).toEqual(true)
 	})
 })
