@@ -18,7 +18,10 @@ $ corepack prepare pnpm@latest --activate
 Create the project with Vite
 
 ```console
-$ pnpm create vite <app> --template vanilla-ts
+$ pnpm create vite <app>
+> Select a framework: Vanilla
+> Select a variant: TypeScript
+
 $ cd <app>
 $ pnpm install
 $ pnpm update
@@ -102,6 +105,12 @@ Add commit lint and pre-commit hooks.
 ```console
 pnpm add -D @commitlint/cli @commitlint/config-conventional
 pnpm add -D husky lint-staged
+```
+
+## Build code for deployment
+
+```console
+$ pnpm build
 ```
 
 ## Technologies

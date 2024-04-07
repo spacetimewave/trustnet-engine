@@ -3,6 +3,15 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"files": ["dist"],
+	"main": "./dist/trustnet-engine.cjs",
+	"module": "./dist/trustnet-engine.js",
+	"exports": {
+		".": {
+		  "import": "./dist/trustnet-engine.js",
+		  "require": "./dist/trustnet-engine.cjs"
+		}
+	},
 	"scripts": {
 		"dev": "vite",
 		"lint": "eslint ./src/**/*.ts",
