@@ -3,13 +3,16 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
-	"files": ["dist"],
+	"files": [
+		"dist"
+	],
 	"main": "./dist/trustnet-engine.cjs",
 	"module": "./dist/trustnet-engine.js",
+	"types": "./dist/trustnet-engine.d.ts",
 	"exports": {
 		".": {
-		  "import": "./dist/trustnet-engine.js",
-		  "require": "./dist/trustnet-engine.cjs"
+			"import": "./dist/trustnet-engine.js",
+			"require": "./dist/trustnet-engine.cjs"
 		}
 	},
 	"scripts": {
@@ -42,7 +45,8 @@
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.4.3",
-		"vite": "^5.2.6"
+		"vite": "^5.2.6",
+		"vite-plugin-dts": "^3.8.1"
 	},
 	"dependencies": {
 		"sha3": "^2.1.4"
