@@ -1,7 +1,8 @@
 {
 	"name": "@spacetimewave/trustnet-engine",
-	"private": true,
-	"version": "0.0.0",
+	"private": false,
+	"version": "0.1.0",
+	"description": "Trustnet Engine",
 	"type": "module",
 	"files": [
 		"dist"
@@ -12,7 +13,8 @@
 	"exports": {
 		".": {
 			"import": "./dist/trustnet-engine.js",
-			"require": "./dist/trustnet-engine.cjs"
+			"require": "./dist/trustnet-engine.cjs",
+			"types": "./dist/trustnet-engine.d.ts"
 		}
 	},
 	"scripts": {

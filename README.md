@@ -111,6 +111,8 @@ pnpm add -D husky lint-staged
 
 ```console
 $ pnpm build
+$ npm login
+$ npm publish
 ```
 
 ## Technologies
