@@ -112,10 +112,15 @@ export class Cryptography {
 			const hex = string.charCodeAt(i).toString(16)
 			result += ('000' + hex).slice(-4)
 		}
-		return result
+		// Add '0x' hexadecimal prefix
+		return '0x' + result
 	}
 
 	public static hexDecode(string: string): string {
+		// Remove '0x' hexadecimal prefix
+		if (string.startsWith('0x')) {
+			string = string.slice(2)
+		}
 		const hexes = string.match(/.{1,4}/g) ?? []
 		let back = ''
 		for (let i = 0; i < hexes.length; i++) {
