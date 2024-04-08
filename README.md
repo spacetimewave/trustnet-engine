@@ -4,7 +4,19 @@ Welcome to trustnet engine.
 
 ## Installation
 
-Soon...
+Install trustnet-engine in your project with the following commands:
+
+#### npm
+
+```console
+$ npm i @spacetimewave/trustnet-engine
+```
+
+#### pnpm
+
+```console
+$ pnpm add @spacetimewave/trustnet-engine
+```
 
 ## Configuration
 
@@ -112,7 +124,7 @@ pnpm add -D husky lint-staged
 ```console
 $ pnpm build
 $ npm login
-$ npm publish
+$ npm publish --access=public
 ```
 
 ## Technologies
