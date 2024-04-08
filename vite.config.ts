@@ -22,7 +22,7 @@ export default defineConfig({
 					title: 'trustnet-engine',
 					filename: './dist/trustnet-engine.html',
 					template: 'treemap',
-					open: true,
+					open: false,
 					gzipSize: true,
 					brotliSize: true,
 				}) as PluginOption,
