@@ -16,7 +16,7 @@ We release patch versions for critical bugfixes, minor versions for new features
 
 Every significant change is documented in the [changelog](https://github.com/spacetimewave/trustnet-engine/blob/main/CHANGELOG.md) file.
 
-Learn more about semantic versioning and how we applied it in **[Appendix A](#semantic-versioning)**.
+Learn more about semantic versioning and how we applied it in **[Appendix A](#appendix-a-semantic-versioning)**.
 
 ## 3. Branch organization
 
@@ -71,7 +71,11 @@ We use GitHub flow as a way to contribute.
 
 1. Fork the GitHub repository.
 2. Clone the forked repository in your local machine.
-3. Login using GitHub CLI saving an encrypted SSH key to push commits
+3. Authenticate with GitHub with SSH (step 3.1) or Github CLI (step 3.2):
+
+   3.1. Generate SSH key, and add it to SSH and GitHub.
+
+   3.2. Login directly using GitHub CLI, gh login makes all this magic, saving an encrypted SSH key to push commits.
 
 ```console
 $ gh auth login
@@ -79,7 +83,7 @@ $ gh auth login
 ? What is your preferred protocol for Git operations on this host? SSH
 ? Generate a new SSH key to add to your GitHub account? Yes
 ? Enter a passphrase for your new SSH key (Optional) ****************
-? Title for your SSH key: github
+? Title for your SSH key: computer
 ? How would you like to authenticate GitHub CLI? Login with a web browser
 ```
 
@@ -97,6 +101,8 @@ $ git remote --verbose
 $ git remote add upstream git@github.com:profile/repo.git
 ```
 
+6. Check again your remote origins in your local repository.
+
 ```console
 $ git remote --verbose
 √ origin git@github.com:you/repo.git (fetch)
@@ -105,21 +111,43 @@ $ git remote --verbose
 √ upstream git@github.com:profile/repo.git (push)
 ```
 
-6. Create a feature or fix branch from main.
+7. [IN REVIEW] To syncronize and bring the latest changes to main branch, execute the following command placed in main branch.
+
+```console
+$ git fetch upstream
+
+$ # then: (like "git pull" which is fetch + merge)
+$ git merge upstream/main main
+$ # or, better, replay your local work on top of the fetched branch like a "git pull --rebase"
+$ git rebase upstream/main
+```
+
+From now on, git pull will bring the changes from main upstream branch to the main local branch
+
+Then, execute the following command to set upstream remote to main branch.
+
+```console
+$ git branch --set-upstream-to=upstream/main
+$ git push # Bring the changes to the forked repository in GitHub
+```
+
+8. Create a feature or fix branch from main.
 
 ```console
 $ git switch -c feature/feature_name
 $ git switch -c fix/fix_name
 ```
 
-7. Install pnpm with NodeJS v16.x.x or greater.
+9. Install NodeJS v16.x.x or greater.
+
+10. Install pnpm with NodeJS v16.x.x or greater.
 
 ```console
 $ corepack enable
 $ corepack prepare pnpm@latest --activate
 ```
 
-8. Install the project dependencies
+11. Install the project dependencies
 
 ```console
 $ pnpm install
@@ -129,12 +157,45 @@ $ pnpm update
 9. Make changes to the codebase.
 10. Make sure your code lints. The linter will catch most issues that may exist in your code. You can check the status of your code styling by simply running `pnpm lint`. However, there are still some styles that the linter cannot pick up. If you are unsure about something, looking at [standard](https://github.com/standard/standard) style guide will guide you in the right direction.
 11. Format your code with prettier. We use an automatic code formatter called Prettier. Run `pnpm format` after making any changes to the code.
-12. Write tests if a new functionality is added or a bug has been fixed. This way we can ensure that we don’t break your code in the future. Run `pnpm test` to execute them. We require that your pull request contains unit tests for any new functionality. Also ensure the complete test suite passes. To check test coverage run `pnpm test:coverage`.
+12. Write tests if a new functionality is added or a bug has been fixed. This way we can ensure that we don't break your code in the future. Run `pnpm test` to execute them. We require that your pull request contains unit tests for any new functionality. Also ensure the complete test suite passes. To check test coverage run `pnpm test:coverage`.
 13. Run `pnpm build` to produce pre-built bundles in build folder, as well as prepare npm packages inside build/packages. If you want to try your changes in your existing project, you may copy the build files into the `/node_modules` folder of the other project and use them instead of the stable version.
-14. Commit the changes in the feature branch.
-15. Push the branch to the forked repository (origin remote).
-16. If you haven't already, complete the CLA.
-17. Make a pull request to the original repository, merging the feature branch to main.
+14. Commit the changes in the feature branch, following the conventional commit message standard explained in **[Appendix E](#appendix-d-commits)**.
+
+```console
+$ git commit -m "message"
+```
+
+Or if you have issues you can commit with the `no-verify` flag
+
+```console
+$ git commit -m "message" --no-verify
+```
+
+15. The commit hooks will be automatically executed when executing the commit message.
+
+16. Push the branch to the forked repository (origin remote). Use one of the following commands.
+
+```console
+$ git push --set-upstream origin feature/feature_name
+$ git push -u origin feature/feature_name
+```
+
+Then the next time you do a git push it will know where to upload that branch
+
+17. If you haven't already, complete the CLA.
+18. Make a pull request to the original repository, merging the feature branch from origin to main branch from upstream. Fill the subject and message of the Pull Request. Please, be self-explanatory and concise.
+
+19. The Pull Request is revised by a bot (i.e. Codecov-io). The bot will execute the tests, check the test coverage, lint the code and its commits. All this stuff is run in CI pipeline.
+
+20. Write the Pull Request commit message.
+
+21. Confirm squash and merge Pull Request.
+
+![](/img/pull-request.jpg)
+
+22. Then, another CI Pipeline will check the commit message of the Pull Request.
+
+23. Then the CD pipeline will deploy our code to the npm repository, following the semantic version standard.
 
 - Always mantain main branch synced to start your development with the latest version of the code. To sync the main branch and bring the lastest changes from the original repository to the forked repository, you can sync main branch directly from GitHub or using the following git commands:
 
