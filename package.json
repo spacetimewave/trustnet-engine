@@ -20,6 +20,7 @@
 	"scripts": {
 		"dev": "vite",
 		"lint": "eslint ./src/**/*.ts",
+		"lint-staged": "lint-staged --concurrent false",
 		"format": "prettier --write .",
 		"build": "tsc && vite build",
 		"preview": "vite preview",

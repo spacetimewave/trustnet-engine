@@ -118,7 +118,8 @@ Add commit lint and pre-commit hooks.
 
 ```console
 pnpm add -D @commitlint/cli @commitlint/config-conventional
-pnpm add -D husky lint-staged
+pnpm add -D husky
+pnpm add -D lint-staged
 ```
 
 ## Build code for deployment
