@@ -111,24 +111,34 @@ $ git remote --verbose
 √ upstream git@github.com:profile/repo.git (push)
 ```
 
-7. [IN REVIEW] To syncronize and bring the latest changes to main branch, execute the following command placed in main branch.
+7. [IN REVIEW] To syncronize and bring the latest changes to main branch, execute the following commands placed in main branch.
 
 ```console
+$ # Using git pull
 $ git fetch upstream
+$ git pull upstream main
 
-$ # then: (like "git pull" which is fetch + merge)
+$ # Or, using fetch+merge (like "git pull" which is fetch + merge)
+$ git fetch upstream
 $ git merge upstream/main main
-$ # or, better, replay your local work on top of the fetched branch like a "git pull --rebase"
+
+$ # Or, using rebase to replay your local work on top of the fetched branch like a "git pull --rebase"
+$ git fetch upstream
 $ git rebase upstream/main
 ```
 
-From now on, git pull will bring the changes from main upstream branch to the main local branch
-
-Then, execute the following command to set upstream remote to main branch.
+Then update the forked repository by pushing the changes to the main branch (optional)
 
 ```console
 $ git branch --set-upstream-to=upstream/main
-$ git push # Bring the changes to the forked repository in GitHub
+$ git push -u origin main # Bring the changes to the forked repository in GitHub
+```
+
+You can also use --set-upstream-to, so git will pull or push directly from/to the upstream branch without specifying it.
+
+```console
+$ git branch --set-upstream-to=upstream/main
+$ git pull
 ```
 
 8. Create a feature or fix branch from main.
@@ -204,6 +214,16 @@ Then the next time you do a git push it will know where to upload that branch
   $ git pull upstream main
   $ git push -u origin main
   ```
+
+24. If you want to remove the branch after completing the pull request
+
+```console
+$ # delete branch locally
+$ git branch -d feature/feature_name
+
+$ # delete branch remotely
+$ git push origin --delete feature/feature_name
+```
 
 ## Contributor License Agreement (CLA)
 
