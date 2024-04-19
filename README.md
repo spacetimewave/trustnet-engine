@@ -122,6 +122,14 @@ pnpm add -D husky
 pnpm add -D lint-staged
 ```
 
+Install git commit hooks and creates a pre-commit file
+
+```console
+$ pnpm husky init
+```
+
+Edit the pre-commit commands inside the .husky/pre-commit file
+
 ## Build code for deployment
 
 ```console
