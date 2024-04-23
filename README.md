@@ -129,6 +129,7 @@ $ pnpm husky init
 ```
 
 Edit the pre-commit commands inside the .husky/pre-commit file
+Edit the commit-msg commands inside the .husky/commit-msg file
 
 ## Build code for deployment
 
