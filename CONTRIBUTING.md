@@ -71,7 +71,7 @@ We use GitHub flow as a way to contribute.
 
 1. Fork the GitHub repository.
 2. Clone the forked repository in your local machine.
-3. Authenticate with GitHub with SSH (step 3.1) or Github CLI (step 3.2):
+3. Authenticate with GitHub using SSH (step 3.1) or Github CLI (step 3.2):
 
    3.1. Generate SSH key, and add it to SSH and GitHub.
 
@@ -111,11 +111,10 @@ $ git remote --verbose
 √ upstream git@github.com:profile/repo.git (push)
 ```
 
-7. [IN REVIEW] To syncronize and bring the latest changes to main branch, execute the following commands placed in main branch.
+7. To syncronize and bring the latest changes to main branch, execute the following commands placed in main branch.
 
 ```console
 $ # Using git pull
-$ git fetch upstream
 $ git pull upstream main
 
 $ # Or, using fetch+merge (like "git pull" which is fetch + merge)
