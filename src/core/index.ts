@@ -5,7 +5,7 @@ import type { IBlockMetadata } from '../models/IBlockMetadata'
 import type { IKeyPair } from '../models/IKeyPair'
 import type { ISeedBlock } from '../models/ISeedBlock'
 
-export class API {
+export class TrustNetEngine {
 	public static async hash(message: string): Promise<string> {
 		return Cryptography.hash(message)
 	}
@@ -39,7 +39,7 @@ export class API {
 	): Promise<IBlockHeader> {
 		const header: IBlockHeader = {
 			version,
-			output_hash: await this.hash(JSON.stringify(content)),
+			output_hash: await hash(JSON.stringify(content)),
 			address,
 			public_key: publicKey,
 			block_id: blockId,
@@ -76,7 +76,7 @@ export class API {
 			header.public_key +
 			header.block_id +
 			header.update_id
-		header.signature = await this.sign(information, privateKey)
+		header.signature = await sign(information, privateKey)
 		return header
 	}
 
@@ -86,7 +86,7 @@ export class API {
 	): Promise<ISeedBlock> {
 		const information =
 			block.version + block.address + block.public_key + block.update_id
-		block.signature = await this.sign(information, privateKey)
+		block.signature = await sign(information, privateKey)
 		return block
 	}
 
@@ -100,11 +100,7 @@ export class API {
 			header.public_key +
 			header.block_id +
 			header.update_id
-		return await this.verify(
-			information,
-			header.signature ?? '',
-			header.public_key,
-		)
+		return await verify(information, header.signature ?? '', header.public_key)
 	}
 
 	public static async verifySeedBlockSignature(
@@ -112,13 +108,12 @@ export class API {
 	): Promise<boolean> {
 		const information =
 			block.version + block.address + block.public_key + block.update_id
-		return await this.verify(information, block.signature ?? '', block.address)
+		return await verify(information, block.signature ?? '', block.address)
 	}
 
 	public static async verifyBlockContent(block: IBlock): Promise<boolean> {
 		return (
-			(await this.hash(JSON.stringify(block.content))) ===
-			block.header.output_hash
+			(await hash(JSON.stringify(block.content))) === block.header.output_hash
 		)
 	}
 
@@ -148,17 +143,17 @@ export class API {
 		block: IBlock,
 		privateKey: string,
 	): Promise<IBlock> {
-		block.header = await this.signBlockHeader(block.header, privateKey)
+		block.header = await signBlockHeader(block.header, privateKey)
 		return block
 	}
 
 	public static async verifyBlock(block: IBlock): Promise<boolean> {
 		return (
-			(await this.verifyBlockContent(block)) &&
-			this.verifyBlockAddress(block) &&
-			this.verifyBlockPublicKey(block) &&
-			(await this.verifyBlockHeaderSignature(block.header)) &&
-			(await this.verifySeedBlockSignature(block.metadata.seed_block))
+			(await verifyBlockContent(block)) &&
+			verifyBlockAddress(block) &&
+			verifyBlockPublicKey(block) &&
+			(await verifyBlockHeaderSignature(block.header)) &&
+			(await verifySeedBlockSignature(block.metadata.seed_block))
 		)
 	}
 
@@ -173,3 +168,32 @@ export class API {
 	public async encrypt(): Promise<void> {}
 	public async decrypt(): Promise<void> {}
 }
+
+// Export the trustnet-engine methods
+export const hash = TrustNetEngine.hash.bind(TrustNetEngine)
+export const generateSignatureKeyPair =
+	TrustNetEngine.generateSignatureKeyPair.bind(TrustNetEngine)
+export const sign = TrustNetEngine.sign.bind(TrustNetEngine)
+export const verify = TrustNetEngine.verify.bind(TrustNetEngine)
+export const generateBlockHeader =
+	TrustNetEngine.generateBlockHeader.bind(TrustNetEngine)
+export const generateSeedBlock =
+	TrustNetEngine.generateSeedBlock.bind(TrustNetEngine)
+export const signBlockHeader =
+	TrustNetEngine.signBlockHeader.bind(TrustNetEngine)
+export const signSeedBlock = TrustNetEngine.signSeedBlock.bind(TrustNetEngine)
+export const verifyBlockHeaderSignature =
+	TrustNetEngine.verifyBlockHeaderSignature.bind(TrustNetEngine)
+export const verifySeedBlockSignature =
+	TrustNetEngine.verifySeedBlockSignature.bind(TrustNetEngine)
+export const verifyBlockContent =
+	TrustNetEngine.verifyBlockContent.bind(TrustNetEngine)
+export const verifyBlockAddress =
+	TrustNetEngine.verifyBlockAddress.bind(TrustNetEngine)
+export const verifyBlockPublicKey =
+	TrustNetEngine.verifyBlockPublicKey.bind(TrustNetEngine)
+export const generateMetadata =
+	TrustNetEngine.generateMetadata.bind(TrustNetEngine)
+export const generateBlock = TrustNetEngine.generateBlock.bind(TrustNetEngine)
+export const signBlock = TrustNetEngine.signBlock.bind(TrustNetEngine)
+export const verifyBlock = TrustNetEngine.verifyBlock.bind(TrustNetEngine)
