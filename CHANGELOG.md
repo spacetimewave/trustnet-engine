@@ -1,3 +1,9 @@
+## 0.2.0 (April 8, 2024)
+
+### TrustNetEngine
+
+- **API**: API module is renamed to TrustNetEngine, and all its methods are exposed. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.1.0 (April 8, 2024)
 
 ### Models
