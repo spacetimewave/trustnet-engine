@@ -5,7 +5,7 @@ import type { IBlockMetadata } from '../models/IBlockMetadata'
 import type { IKeyPair } from '../models/IKeyPair'
 import type { ISeedBlock } from '../models/ISeedBlock'
 
-export class TrustNetEngine {
+export class Core {
 	public static async hash(message: string): Promise<string> {
 		return Cryptography.hash(message)
 	}
@@ -170,30 +170,21 @@ export class TrustNetEngine {
 }
 
 // Export the trustnet-engine methods
-export const hash = TrustNetEngine.hash.bind(TrustNetEngine)
-export const generateSignatureKeyPair =
-	TrustNetEngine.generateSignatureKeyPair.bind(TrustNetEngine)
-export const sign = TrustNetEngine.sign.bind(TrustNetEngine)
-export const verify = TrustNetEngine.verify.bind(TrustNetEngine)
-export const generateBlockHeader =
-	TrustNetEngine.generateBlockHeader.bind(TrustNetEngine)
-export const generateSeedBlock =
-	TrustNetEngine.generateSeedBlock.bind(TrustNetEngine)
-export const signBlockHeader =
-	TrustNetEngine.signBlockHeader.bind(TrustNetEngine)
-export const signSeedBlock = TrustNetEngine.signSeedBlock.bind(TrustNetEngine)
+export const hash = Core.hash.bind(Core)
+export const generateSignatureKeyPair = Core.generateSignatureKeyPair.bind(Core)
+export const sign = Core.sign.bind(Core)
+export const verify = Core.verify.bind(Core)
+export const generateBlockHeader = Core.generateBlockHeader.bind(Core)
+export const generateSeedBlock = Core.generateSeedBlock.bind(Core)
+export const signBlockHeader = Core.signBlockHeader.bind(Core)
+export const signSeedBlock = Core.signSeedBlock.bind(Core)
 export const verifyBlockHeaderSignature =
-	TrustNetEngine.verifyBlockHeaderSignature.bind(TrustNetEngine)
-export const verifySeedBlockSignature =
-	TrustNetEngine.verifySeedBlockSignature.bind(TrustNetEngine)
-export const verifyBlockContent =
-	TrustNetEngine.verifyBlockContent.bind(TrustNetEngine)
-export const verifyBlockAddress =
-	TrustNetEngine.verifyBlockAddress.bind(TrustNetEngine)
-export const verifyBlockPublicKey =
-	TrustNetEngine.verifyBlockPublicKey.bind(TrustNetEngine)
-export const generateMetadata =
-	TrustNetEngine.generateMetadata.bind(TrustNetEngine)
-export const generateBlock = TrustNetEngine.generateBlock.bind(TrustNetEngine)
-export const signBlock = TrustNetEngine.signBlock.bind(TrustNetEngine)
-export const verifyBlock = TrustNetEngine.verifyBlock.bind(TrustNetEngine)
+	Core.verifyBlockHeaderSignature.bind(Core)
+export const verifySeedBlockSignature = Core.verifySeedBlockSignature.bind(Core)
+export const verifyBlockContent = Core.verifyBlockContent.bind(Core)
+export const verifyBlockAddress = Core.verifyBlockAddress.bind(Core)
+export const verifyBlockPublicKey = Core.verifyBlockPublicKey.bind(Core)
+export const generateMetadata = Core.generateMetadata.bind(Core)
+export const generateBlock = Core.generateBlock.bind(Core)
+export const signBlock = Core.signBlock.bind(Core)
+export const verifyBlock = Core.verifyBlock.bind(Core)
