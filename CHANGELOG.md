@@ -1,4 +1,25 @@
-## 0.2.0 (April 8, 2024)
+## 0.3.0 (Jan 19, 2025)
+
+### Account
+
+- **Account**: Account module is created to facilitate interaction with accounts through Object Oriented Programming (OOP). ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **constructor()**: Create Account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **init()**: Initialize Account, account key-pairs, block key-pairs, seed block, and account blocks. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **isAccountInitialized()**: Check if account and block public keys, and seed block are already generated. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **isBlockPrivateKeyInitialized()**: Check if block private key is stored within the Account instance. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createNewBlock()**: Create new Block for the account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateBlock()**: Update an account's Block. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteBlock()**: Delete an account's Block. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifyBlock()**: Verify an account's Block. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifySeedBlock()**: Verify an account's Seed Block. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **importAccount()**: Import an account (blocks and seed block). ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **exportAccount()**: Export an account (blocks and seed block). ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **TrustNetEngine**: TrustNetEngine module is renamed to Core. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.2.0 (Jan 13, 2025)
 
 ### TrustNetEngine
 

@@ -1,6 +1,6 @@
 import { TrustNetEngine } from '.'
 
-describe('API module test suite', () => {
+describe('Core module test suite', () => {
 	it('Hash Unit Test', async () => {
 		expect(await TrustNetEngine.hash('Message')).toEqual(
 			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35',
@@ -117,7 +117,6 @@ describe('API module test suite', () => {
 			blockMetadata,
 		)
 
-		// console.log(block)
 		expect(await TrustNetEngine.verifyBlock(block)).toEqual(true)
 	})
 })
