@@ -1,7 +1,7 @@
 {
 	"name": "@spacetimewave/trustnet-engine",
 	"private": false,
-	"version": "0.3.2",
+	"version": "0.3.3",
 	"description": "Trustnet Engine",
 	"type": "module",
 	"files": [
