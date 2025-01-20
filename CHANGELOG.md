@@ -1,6 +1,12 @@
-## 0.3.3 (Jan 20, 2025)
+## 0.3.4 (Jan 20, 2025)
 
 ### Account
+
+- **Account**: Export Account pubkey and Block pubkey from Account object. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.3.3 (Jan 20, 2025)
+
+### Models
 
 - **Models**: Export Model Object Interface fix to enable typing. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
 

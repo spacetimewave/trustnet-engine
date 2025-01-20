@@ -15,8 +15,8 @@ import { IKeyPair } from '../models/IKeyPair'
 import { ISeedBlock } from '../models/ISeedBlock'
 
 export class Account {
-	private accountPublicKey?: string
-	private blockPublicKey?: string
+	public accountPublicKey?: string
+	public blockPublicKey?: string
 	private blockPrivateKey?: string
 	// private accountProviders?: []
 	// private accountDomains?: []
