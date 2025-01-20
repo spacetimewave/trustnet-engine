@@ -1,3 +1,21 @@
+## 0.3.3 (Jan 20, 2025)
+
+### Account
+
+- **Models**: Export Model Object Interface fix to enable typing. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.3.2 (Jan 20, 2025)
+
+### Account
+
+- **Account**: Export Account Module fix. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.3.1 (Jan 20, 2025)
+
+### Account
+
+- **Account**: Export Account Module fix. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.3.0 (Jan 19, 2025)
 
 ### Account
