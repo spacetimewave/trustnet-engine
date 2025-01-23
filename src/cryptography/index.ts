@@ -154,14 +154,30 @@ export class Cryptography {
 		)
 	}
 
+	public static abtob64(arrayBuffer: ArrayBuffer): string {
+		const base64Key = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)))
+		return base64Key
+	}
+
+	public static b64toab(base64String: string): ArrayBuffer {
+		const binaryKey = atob(base64String)
+		const keyBuffer = new Uint8Array(binaryKey.length)
+		for (let i = 0; i < binaryKey.length; i++) {
+			keyBuffer[i] = binaryKey.charCodeAt(i)
+		}
+		return keyBuffer.buffer
+	}
+
 	public static async privateKeyToString(key: CryptoKey): Promise<string> {
-		return this.abtos(await crypto.subtle.exportKey('pkcs8', key))
+		const exportedKey = await crypto.subtle.exportKey('pkcs8', key)
+		const base64Key = this.abtob64(exportedKey)
+		return base64Key
 	}
 
 	public static async stringToPrivateKey(key: string): Promise<CryptoKey> {
 		return await crypto.subtle.importKey(
 			'pkcs8',
-			this.stoab(key),
+			this.b64toab(key),
 			{
 				name: 'ECDSA',
 				namedCurve: 'P-256',
@@ -169,5 +185,15 @@ export class Cryptography {
 			true,
 			['sign'],
 		)
+	}
+
+	public static isPublicKeyFormatValid(publicKey: string): boolean {
+		const publicKeyRegex = /^0x([0-9a-fA-F]){260}$/
+		return publicKeyRegex.test(publicKey)
+	}
+
+	public static isPrivateKeyFormatValid(privateKey: string): boolean {
+		const privateKeyRegex = /^[A-Za-z0-9+/=]{184}$/
+		return privateKeyRegex.test(privateKey)
 	}
 }

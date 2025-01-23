@@ -1,3 +1,15 @@
+## 0.4.0 (Jan 23, 2025)
+
+### Cryptography
+
+- **isPublicKeyFormatValid**: Check if the public key is in a valid format. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **isPrivateKeyFormatValid**: Check if the private key is in a valid format. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **generateKeyPair**: Now returns a private key in base64 string format. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **stringToPrivateKey**: Transforms a base64 key string to CryptoKey. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **privateKeyToString**: Transforms a CryptoKey to base64 key string. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **abtob64**: Transforms an ArrayBuffer to base64 string. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **b64toab**: Transforms abase64 string to ArrayBuffer. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.3.4 (Jan 20, 2025)
 
 ### Account
