@@ -1,3 +1,21 @@
+## 0.5.0 (Feb 2, 2025)
+
+### Core
+
+- **getUserDomainNameEntry**: Get a domain name entry. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createUserDomainNameEntry**: Get a domain name entry. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateUserDomainNameEntry**: Get a domain name entry. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteUserDomainNameEntry**: Get a domain name entry. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### http
+
+- **http**: Http instance to make HTTP requests. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **request**: Base HTTP request method. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **get**: GET HTTP method. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **post**: POST HTTP method. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **put**: PUT HTTP method. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **delete**: DELETE HTTP method. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.4.0 (Jan 23, 2025)
 
 ### Cryptography

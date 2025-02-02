@@ -1,4 +1,5 @@
 import { Core } from '.'
+import http from '../http'
 
 describe('Core module test suite', () => {
 	it('Hash Unit Test', async () => {
@@ -108,5 +109,122 @@ describe('Core module test suite', () => {
 		const block = Core.generateBlock(signedBlockHeader, content, blockMetadata)
 
 		expect(await Core.verifyBlock(block)).toEqual(true)
+	})
+
+	it('Get Domain Name Entry Test', async () => {
+		// Initializations
+		const username = 'username.stw'
+		const urls = ['username.com', 'username.net']
+		const ips = ['10.10.10.10']
+		// Mocking
+		const dnsEntryResponse = {
+			name: username,
+			urls: urls,
+			ips: ips,
+		}
+		const httpGet = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => dnsEntryResponse,
+		}))
+		const httpModule = new http()
+		jest.spyOn(httpModule, 'get').mockImplementation(httpGet)
+		// Test
+		const core = new Core(httpModule)
+		const domainNameEntry = await core.getUserDomainNameEntry(
+			'username.stw',
+			'http://localhost:3000',
+		)
+
+		expect(domainNameEntry).toBeDefined()
+		if (domainNameEntry) {
+			expect(domainNameEntry).toHaveProperty('name', username)
+			expect(domainNameEntry).toHaveProperty('urls', urls)
+			expect(domainNameEntry).toHaveProperty('ips', ips)
+		}
+	})
+
+	it('Create Domain Name Entry Test', async () => {
+		// Initializations
+		const username = 'username.stw'
+		const urls = ['username.com', 'username.net']
+		const ips = ['10.10.10.10']
+		//Mocking
+		const dnsEntryResponse = {
+			name: username,
+			urls: urls,
+			ips: ips,
+		}
+		const httpPost = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 201,
+		}))
+		const httpModule = new http()
+		jest.spyOn(httpModule, 'post').mockImplementation(httpPost)
+		// Test
+		const core = new Core(httpModule)
+		await core.createUserDomainNameEntry(
+			dnsEntryResponse,
+			'http://localhost:3000',
+		)
+
+		expect(httpPost).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Update Domain Name Entry Test', async () => {
+		// Initializations
+		const username = 'username.stw'
+		const urls = ['username.org']
+		const ips = ['10.8.10.8']
+		//Mocking
+		const dnsEntryResponse = {
+			name: username,
+			urls: urls,
+			ips: ips,
+		}
+		const httpPut = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 204,
+		}))
+		const httpModule = new http()
+		jest.spyOn(httpModule, 'put').mockImplementation(httpPut)
+		// Test
+		const core = new Core(httpModule)
+		await core.updateUserDomainNameEntry(
+			dnsEntryResponse,
+			'http://localhost:3000',
+		)
+
+		// expect(httpPost).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Delete Domain Name Entry Test', async () => {
+		// Initializations
+		const username = 'username.stw'
+		const urls = ['username.org']
+		const ips = ['10.8.10.8']
+		//Mocking
+		const dnsEntryResponse = {
+			name: username,
+			urls: urls,
+			ips: ips,
+		}
+		const httpDelete = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 204,
+		}))
+		const httpModule = new http()
+		jest.spyOn(httpModule, 'delete').mockImplementation(httpDelete)
+		// Test
+		const core = new Core(httpModule)
+		await core.deleteUserDomainNameEntry(
+			dnsEntryResponse,
+			'http://localhost:3000',
+		)
+
+		// expect(httpPost).toHaveBeenCalled()
+		expect(true).toEqual(true)
 	})
 })

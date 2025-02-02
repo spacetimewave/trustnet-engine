@@ -1,11 +1,19 @@
 import { Cryptography } from '../cryptography'
+import http from '../http'
 import type { IBlock } from '../models/IBlock'
 import type { IBlockHeader } from '../models/IBlockHeader'
 import type { IBlockMetadata } from '../models/IBlockMetadata'
+import { IDomainNameEntry } from '../models/IDomainNameEntry'
 import type { IKeyPair } from '../models/IKeyPair'
 import type { ISeedBlock } from '../models/ISeedBlock'
 
 export class Core {
+	public http: http
+
+	constructor(http: http) {
+		this.http = http
+	}
+
 	public static async hash(message: string): Promise<string> {
 		return Cryptography.hash(message)
 	}
@@ -156,6 +164,72 @@ export class Core {
 			(await verifySeedBlockSignature(block.metadata.seed_block))
 		)
 	}
+
+	public async getUserDomainNameEntry(
+		username: string,
+		domainUrl: string,
+	): Promise<IDomainNameEntry | undefined> {
+		const response = await this.http.get(`${domainUrl}/api/v1/dns/${username}`)
+
+		if (response.status === 404 || !response.ok) {
+			console.log(response)
+			return undefined
+		}
+
+		const dnsEntry: IDomainNameEntry = await response.json()
+		return dnsEntry
+	}
+
+	public async createUserDomainNameEntry(
+		dnsEntry: IDomainNameEntry,
+		domainUrl: string,
+	): Promise<void> {
+		const response = await this.http.post(
+			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+			dnsEntry,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async updateUserDomainNameEntry(
+		dnsEntry: IDomainNameEntry,
+		domainUrl: string,
+	): Promise<void> {
+		const response = await this.http.put(
+			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+			dnsEntry,
+		)
+		if (response.status === 204 || response.status === 200) {
+			return
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async deleteUserDomainNameEntry(
+		dnsEntry: IDomainNameEntry,
+		domainUrl: string,
+	): Promise<void> {
+		const response = await this.http.delete(
+			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+		)
+		if (response.status === 200 || response.status === 204) {
+			return
+		} else {
+			throw new Error('Failed to delete domain name entry')
+		}
+	}
+
+	// public static async getUserSeedBlockByUsername(
+	// 	username: string,
+	// 	domainUrl: string,
+	// ): Promise<ISeedBlock | undefined> {
+
+	// }
 
 	public async getAccountProviders(): Promise<void> {}
 	public async getUsername(): Promise<void> {}
