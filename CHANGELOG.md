@@ -1,3 +1,9 @@
+## 0.5.3 (Feb 3, 2025)
+
+### Core
+
+- **IDomainNameEntry**: Build before publish bug issue fix. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.5.2 (Feb 3, 2025)
 
 ### Core
