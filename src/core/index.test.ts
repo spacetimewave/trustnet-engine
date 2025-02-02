@@ -118,9 +118,9 @@ describe('Core module test suite', () => {
 		const ips = ['10.10.10.10']
 		// Mocking
 		const dnsEntryResponse = {
-			name: username,
-			urls: urls,
-			ips: ips,
+			domainName: username,
+			domainUrls: urls,
+			domainIPs: ips,
 		}
 		const httpGet = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -138,9 +138,9 @@ describe('Core module test suite', () => {
 
 		expect(domainNameEntry).toBeDefined()
 		if (domainNameEntry) {
-			expect(domainNameEntry).toHaveProperty('name', username)
-			expect(domainNameEntry).toHaveProperty('urls', urls)
-			expect(domainNameEntry).toHaveProperty('ips', ips)
+			expect(domainNameEntry).toHaveProperty('domainName', username)
+			expect(domainNameEntry).toHaveProperty('domainUrls', urls)
+			expect(domainNameEntry).toHaveProperty('domainIPs', ips)
 		}
 	})
 
@@ -151,9 +151,9 @@ describe('Core module test suite', () => {
 		const ips = ['10.10.10.10']
 		//Mocking
 		const dnsEntryResponse = {
-			name: username,
-			urls: urls,
-			ips: ips,
+			domainName: username,
+			domainUrls: urls,
+			domainIPs: ips,
 		}
 		const httpPost = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -179,9 +179,9 @@ describe('Core module test suite', () => {
 		const ips = ['10.8.10.8']
 		//Mocking
 		const dnsEntryResponse = {
-			name: username,
-			urls: urls,
-			ips: ips,
+			domainName: username,
+			domainUrls: urls,
+			domainIPs: ips,
 		}
 		const httpPut = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -196,7 +196,7 @@ describe('Core module test suite', () => {
 			'http://localhost:3000',
 		)
 
-		// expect(httpPost).toHaveBeenCalled()
+		expect(httpPut).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
 
@@ -207,9 +207,9 @@ describe('Core module test suite', () => {
 		const ips = ['10.8.10.8']
 		//Mocking
 		const dnsEntryResponse = {
-			name: username,
-			urls: urls,
-			ips: ips,
+			domainName: username,
+			domainUrls: urls,
+			domainIPs: ips,
 		}
 		const httpDelete = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -224,7 +224,7 @@ describe('Core module test suite', () => {
 			'http://localhost:3000',
 		)
 
-		// expect(httpPost).toHaveBeenCalled()
+		expect(httpDelete).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
 })

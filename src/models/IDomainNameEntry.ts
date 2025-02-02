@@ -1,5 +1,5 @@
 export interface IDomainNameEntry {
-	name: string
-	urls: string[]
-	ips: string[]
+	domainName: string
+	domainUrls: string[]
+	domainIPs: string[]
 }

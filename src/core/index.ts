@@ -166,10 +166,12 @@ export class Core {
 	}
 
 	public async getUserDomainNameEntry(
-		username: string,
+		domainName: string,
 		domainUrl: string,
 	): Promise<IDomainNameEntry | undefined> {
-		const response = await this.http.get(`${domainUrl}/api/v1/dns/${username}`)
+		const response = await this.http.get(
+			`${domainUrl}/api/v1/dns/${domainName}`,
+		)
 
 		if (response.status === 404 || !response.ok) {
 			console.log(response)
@@ -185,7 +187,7 @@ export class Core {
 		domainUrl: string,
 	): Promise<void> {
 		const response = await this.http.post(
-			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
 			dnsEntry,
 		)
 		if (response.status === 201 || response.status === 200) {
@@ -200,7 +202,7 @@ export class Core {
 		domainUrl: string,
 	): Promise<void> {
 		const response = await this.http.put(
-			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
 			dnsEntry,
 		)
 		if (response.status === 204 || response.status === 200) {
@@ -215,7 +217,7 @@ export class Core {
 		domainUrl: string,
 	): Promise<void> {
 		const response = await this.http.delete(
-			`${domainUrl}/api/v1/dns/${dnsEntry.name}`,
+			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
 		)
 		if (response.status === 200 || response.status === 204) {
 			return
