@@ -1,3 +1,9 @@
+## 0.5.2 (Feb 3, 2025)
+
+### Core
+
+- **IDomainNameEntry**: Export IDomainNameEntry definition. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.5.1 (Feb 2, 2025)
 
 ### Core
