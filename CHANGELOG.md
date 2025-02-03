@@ -1,3 +1,9 @@
+## 0.5.4 (Feb 3, 2025)
+
+### Global
+
+- **NodeJS**: Fix "The current file is a CommonJS module" bug in NodeJS. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.5.3 (Feb 3, 2025)
 
 ### Core
