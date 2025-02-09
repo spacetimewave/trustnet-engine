@@ -1,4 +1,5 @@
 import { Account } from '.'
+import { Core } from '../core'
 
 describe('Account module test suite', () => {
 	it('Account initialization', async () => {
@@ -48,5 +49,114 @@ describe('Account module test suite', () => {
 				deletedBlock.header.update_id === 2 &&
 				deletedBlock.content === '',
 		).toEqual(true)
+	})
+
+	it('Get Dns Record', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		await account.init()
+		// Mock the response
+		const domainName = 'example.stw'
+		const accountPublicKey =
+			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35'
+		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const getDnsRecordMock = jest.fn().mockImplementation(async () => ({
+			domainName,
+			accountPublicKey,
+			hostingProviderAddresses,
+		}))
+		jest.spyOn(core, 'getDnsRecord').mockImplementation(getDnsRecordMock)
+		const dnsRecord = await account.getDnsRecord(
+			'example.stw',
+			'dns.spacetimewave.com',
+		)
+
+		expect(dnsRecord).toBeDefined()
+		if (dnsRecord) {
+			expect(dnsRecord).toHaveProperty('domainName', domainName)
+			expect(dnsRecord).toHaveProperty('accountPublicKey', accountPublicKey)
+			expect(dnsRecord).toHaveProperty(
+				'hostingProviderAddresses',
+				hostingProviderAddresses,
+			)
+		}
+	})
+
+	it('Create Dns Record', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const domainName = 'example.stw'
+		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const createDnsRecordMock = jest.fn().mockImplementation(async () => {})
+		jest.spyOn(core, 'createDnsRecord').mockImplementation(createDnsRecordMock)
+		await account.createDnsRecord(
+			domainName,
+			hostingProviderAddresses,
+			blockKeyPair.privateKey,
+		)
+
+		expect(createDnsRecordMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Update Dns Record', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const domainName = 'example.stw'
+		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const updateDnsRecordMock = jest.fn().mockImplementation(async () => {})
+		jest.spyOn(core, 'createDnsRecord').mockImplementation(updateDnsRecordMock)
+		await account.createDnsRecord(
+			domainName,
+			hostingProviderAddresses,
+			blockKeyPair.privateKey,
+		)
+
+		expect(updateDnsRecordMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Delete Dns Record', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const domainName = 'example.stw'
+		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const deleteDnsRecordMock = jest.fn().mockImplementation(async () => {})
+		jest.spyOn(core, 'createDnsRecord').mockImplementation(deleteDnsRecordMock)
+		await account.createDnsRecord(
+			domainName,
+			hostingProviderAddresses,
+			blockKeyPair.privateKey,
+		)
+
+		expect(deleteDnsRecordMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Get Name Server', async () => {
+		// Mock the response
+		const domainName = 'example.stw'
+		const nameServer = await Account.getNameServerByDomain(domainName)
+		expect(nameServer).toEqual({
+			domainExtension: 'stw',
+			nameServerAddress: ['localhost:3000', 'dns.spacetimewave.com'],
+		})
+	})
+
+	it('Get Name Server Error', async () => {
+		// Mock the response
+		const domainName = 'example.on'
+		try {
+			await Account.getNameServerByDomain(domainName)
+			expect(true).toEqual(false)
+		} catch {
+			expect(true).toEqual(true)
+		}
 	})
 })

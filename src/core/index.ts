@@ -1,17 +1,23 @@
+import { NAME_SERVERS } from '../constants/dns'
 import { Cryptography } from '../cryptography'
 import http from '../http'
 import type { IBlock } from '../models/IBlock'
 import type { IBlockHeader } from '../models/IBlockHeader'
 import type { IBlockMetadata } from '../models/IBlockMetadata'
-import { IDomainNameEntry } from '../models/IDomainNameEntry'
+import { IDnsProvider } from '../models/IDnsProvider'
+import { IDnsRecord } from '../models/IDnsRecord'
+import { IDnsRecordMessage } from '../models/IDnsRecordMessage'
 import type { IKeyPair } from '../models/IKeyPair'
+import { IMessage } from '../models/IMessage'
+import { IMessageHeader } from '../models/IMessageHeader'
+import { IMessageMetadata } from '../models/IMessageMetadata'
 import type { ISeedBlock } from '../models/ISeedBlock'
 
 export class Core {
 	public http: http
 
-	constructor(http: http) {
-		this.http = http
+	constructor(http_module: http | undefined = undefined) {
+		this.http = http_module ?? new http()
 	}
 
 	public static async hash(message: string): Promise<string> {
@@ -47,7 +53,7 @@ export class Core {
 	): Promise<IBlockHeader> {
 		const header: IBlockHeader = {
 			version,
-			output_hash: await hash(JSON.stringify(content)),
+			output_hash: await this.hash(JSON.stringify(content)),
 			address,
 			public_key: publicKey,
 			block_id: blockId,
@@ -84,7 +90,7 @@ export class Core {
 			header.public_key +
 			header.block_id +
 			header.update_id
-		header.signature = await sign(information, privateKey)
+		header.signature = await this.sign(information, privateKey)
 		return header
 	}
 
@@ -94,7 +100,7 @@ export class Core {
 	): Promise<ISeedBlock> {
 		const information =
 			block.version + block.address + block.public_key + block.update_id
-		block.signature = await sign(information, privateKey)
+		block.signature = await this.sign(information, privateKey)
 		return block
 	}
 
@@ -108,7 +114,11 @@ export class Core {
 			header.public_key +
 			header.block_id +
 			header.update_id
-		return await verify(information, header.signature ?? '', header.public_key)
+		return await this.verify(
+			information,
+			header.signature ?? '',
+			header.public_key,
+		)
 	}
 
 	public static async verifySeedBlockSignature(
@@ -116,12 +126,13 @@ export class Core {
 	): Promise<boolean> {
 		const information =
 			block.version + block.address + block.public_key + block.update_id
-		return await verify(information, block.signature ?? '', block.address)
+		return await this.verify(information, block.signature ?? '', block.address)
 	}
 
 	public static async verifyBlockContent(block: IBlock): Promise<boolean> {
 		return (
-			(await hash(JSON.stringify(block.content))) === block.header.output_hash
+			(await this.hash(JSON.stringify(block.content))) ===
+			block.header.output_hash
 		)
 	}
 
@@ -133,7 +144,7 @@ export class Core {
 		return block.header.public_key === block.metadata.seed_block?.public_key
 	}
 
-	public static generateMetadata(seedBlock: ISeedBlock): IBlockMetadata {
+	public static generateBlockMetadata(seedBlock: ISeedBlock): IBlockMetadata {
 		const metadata: IBlockMetadata = { seed_block: seedBlock }
 		return metadata
 	}
@@ -151,26 +162,136 @@ export class Core {
 		block: IBlock,
 		privateKey: string,
 	): Promise<IBlock> {
-		block.header = await signBlockHeader(block.header, privateKey)
+		block.header = await this.signBlockHeader(block.header, privateKey)
 		return block
 	}
 
 	public static async verifyBlock(block: IBlock): Promise<boolean> {
 		return (
-			(await verifyBlockContent(block)) &&
-			verifyBlockAddress(block) &&
-			verifyBlockPublicKey(block) &&
-			(await verifyBlockHeaderSignature(block.header)) &&
-			(await verifySeedBlockSignature(block.metadata.seed_block))
+			(await this.verifyBlockContent(block)) &&
+			this.verifyBlockAddress(block) &&
+			this.verifyBlockPublicKey(block) &&
+			(await this.verifyBlockHeaderSignature(block.header)) &&
+			(await this.verifySeedBlockSignature(block.metadata.seed_block))
 		)
 	}
 
-	public async getUserDomainNameEntry(
+	public static async generateMessageHeader(
+		content: any,
+		address: string,
+		publicKey: string,
+		version: number = 1,
+	): Promise<IMessageHeader> {
+		const header: IMessageHeader = {
+			version,
+			output_hash: await this.hash(JSON.stringify(content)),
+			address,
+			public_key: publicKey,
+			signature: undefined,
+		}
+		return header
+	}
+
+	public static generateMessageMetadata(
+		seedBlock: ISeedBlock,
+	): IMessageMetadata {
+		const metadata: IMessageMetadata = { seed_block: seedBlock }
+		return metadata
+	}
+
+	public static generateMessage(
+		header: IMessageHeader,
+		content: any,
+		metadata: IMessageMetadata,
+	): IMessage {
+		const message: IMessage = { header, content, metadata }
+		return message
+	}
+
+	public static async signMessageHeader(
+		header: IMessageHeader,
+		privateKey: string,
+	): Promise<IMessageHeader> {
+		const information =
+			header.version + header.output_hash + header.address + header.public_key
+		header.signature = await this.sign(information, privateKey)
+		return header
+	}
+
+	public static async signMessage(
+		message: IMessage,
+		privateKey: string,
+	): Promise<IMessage> {
+		message.header = await this.signMessageHeader(message.header, privateKey)
+		return message
+	}
+
+	public static async verifyMessageContent(
+		message: IMessage,
+	): Promise<boolean> {
+		return (
+			(await this.hash(JSON.stringify(message.content))) ===
+			message.header.output_hash
+		)
+	}
+
+	public static verifyMessageAddress(message: IMessage): boolean {
+		return message.header.address === message.metadata.seed_block?.address
+	}
+
+	public static verifyMessagePublicKey(message: IMessage): boolean {
+		return message.header.public_key === message.metadata.seed_block?.public_key
+	}
+
+	public static async verifyMessageHeaderSignature(
+		header: IMessageHeader,
+	): Promise<boolean> {
+		const information =
+			header.version + header.output_hash + header.address + header.public_key
+		return await this.verify(
+			information,
+			header.signature ?? '',
+			header.public_key,
+		)
+	}
+
+	public static async verifyMessage(message: IMessage): Promise<boolean> {
+		return (
+			(await this.verifyMessageContent(message)) &&
+			this.verifyMessageAddress(message) &&
+			this.verifyMessagePublicKey(message) &&
+			(await this.verifyMessageHeaderSignature(message.header)) &&
+			(await this.verifySeedBlockSignature(message.metadata.seed_block))
+		)
+	}
+
+	public static async getNameServerByDomain(
 		domainName: string,
-		domainUrl: string,
-	): Promise<IDomainNameEntry | undefined> {
+	): Promise<IDnsProvider | undefined> {
+		const domainExtension = domainName.split('.').pop()
+		if (!domainExtension) {
+			throw new Error('Invalid domain name')
+		}
+		const nameServer = await Core.getNameServerByExtension(domainExtension)
+		if (!nameServer) {
+			throw new Error('Name server not found')
+		}
+		return nameServer
+	}
+
+	// TODO: Implement NAME_SERVER distributed repository
+	public static async getNameServerByExtension(
+		domainExtension: string,
+	): Promise<IDnsProvider | undefined> {
+		return NAME_SERVERS.find((ns) => ns.domainExtension === domainExtension)
+	}
+
+	public async getDnsRecord(
+		domainName: string,
+		nameServerAddress: string,
+	): Promise<IDnsRecord | undefined> {
 		const response = await this.http.get(
-			`${domainUrl}/api/v1/dns/${domainName}`,
+			`${nameServerAddress}/api/v1/dns/${domainName}`,
 		)
 
 		if (response.status === 404 || !response.ok) {
@@ -178,17 +299,17 @@ export class Core {
 			return undefined
 		}
 
-		const dnsEntry: IDomainNameEntry = await response.json()
-		return dnsEntry
+		const dnsRecord: IDnsRecord = await response.json()
+		return dnsRecord
 	}
 
-	public async createUserDomainNameEntry(
-		dnsEntry: IDomainNameEntry,
-		domainUrl: string,
+	public async createDnsRecord(
+		dnsRecordMessage: IDnsRecordMessage,
+		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.post(
-			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
-			dnsEntry,
+			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			dnsRecordMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
 			return
@@ -197,13 +318,13 @@ export class Core {
 		}
 	}
 
-	public async updateUserDomainNameEntry(
-		dnsEntry: IDomainNameEntry,
-		domainUrl: string,
+	public async updateDnsRecord(
+		dnsRecordMessage: IDnsRecordMessage,
+		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.put(
-			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
-			dnsEntry,
+			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			dnsRecordMessage,
 		)
 		if (response.status === 204 || response.status === 200) {
 			return
@@ -212,12 +333,12 @@ export class Core {
 		}
 	}
 
-	public async deleteUserDomainNameEntry(
-		dnsEntry: IDomainNameEntry,
-		domainUrl: string,
+	public async deleteDnsRecord(
+		dnsRecordMessage: IDnsRecordMessage,
+		domainAddress: string,
 	): Promise<void> {
 		const response = await this.http.delete(
-			`${domainUrl}/api/v1/dns/${dnsEntry.domainName}`,
+			`${domainAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
 		)
 		if (response.status === 200 || response.status === 204) {
 			return
@@ -244,23 +365,3 @@ export class Core {
 	public async encrypt(): Promise<void> {}
 	public async decrypt(): Promise<void> {}
 }
-
-// Export the trustnet-engine methods
-export const hash = Core.hash.bind(Core)
-export const generateSignatureKeyPair = Core.generateSignatureKeyPair.bind(Core)
-export const sign = Core.sign.bind(Core)
-export const verify = Core.verify.bind(Core)
-export const generateBlockHeader = Core.generateBlockHeader.bind(Core)
-export const generateSeedBlock = Core.generateSeedBlock.bind(Core)
-export const signBlockHeader = Core.signBlockHeader.bind(Core)
-export const signSeedBlock = Core.signSeedBlock.bind(Core)
-export const verifyBlockHeaderSignature =
-	Core.verifyBlockHeaderSignature.bind(Core)
-export const verifySeedBlockSignature = Core.verifySeedBlockSignature.bind(Core)
-export const verifyBlockContent = Core.verifyBlockContent.bind(Core)
-export const verifyBlockAddress = Core.verifyBlockAddress.bind(Core)
-export const verifyBlockPublicKey = Core.verifyBlockPublicKey.bind(Core)
-export const generateMetadata = Core.generateMetadata.bind(Core)
-export const generateBlock = Core.generateBlock.bind(Core)
-export const signBlock = Core.signBlock.bind(Core)
-export const verifyBlock = Core.verifyBlock.bind(Core)

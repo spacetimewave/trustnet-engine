@@ -1,3 +1,44 @@
+## 0.6.0 (Feb 10, 2025)
+
+### Account
+
+- **getNameServerByDomain**: Get Name Servers of a domain. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getDnsRecord**: Get DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createDnsRecord**: Create DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateDnsRecord**: Update DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteDnsRecord**: Delete DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **generateMessageHeader**: Generate Message Header from message and account information. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **generateMessageMetadata**: Generate Message Metadata from seed block. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **generateMessage**: Generate Message Metadata and Message Header. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **signMessageHeader**: Sign Message Header. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **signMessage**: Sign Message by signing Messsage Header. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifyMessageContent**: Verify output hash of the message content. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifyMessageAddress**: Verify message header address. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifyMessageHeaderSignature**: Verify message header signature. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **verifyMessage**: Verify the message by verifying signature, address, and output hash of the content. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getNameServerByDomain**: Get Name Servers of a domain. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getNameServerByExtension**: Get Name Servers of a domain by domain extension. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getDnsRecord**: Get DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createDnsRecord**: Create DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateDnsRecord**: Update DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteDnsRecord**: Delete DNS record of an account. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Constants
+
+- **NAME_SERVERS**: Default Name Servers until decentralized repository for DNS providers is implemented. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Models
+
+- **IMessage**: Message model that consists of a message, its header and its metadata. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IMessageHeader**: Message Header model. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IMessageMetadata**: Message Metadata model. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDnsProvider**: Name Server Provider Model. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDnsRecord**: DNS Record that constists of a domain name, hosting providers and account public key. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDnsRecordMessage**: IMessage model that contains a DnsRecord as message content. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.5.4 (Feb 3, 2025)
 
 ### Global

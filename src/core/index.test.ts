@@ -1,5 +1,6 @@
 import { Core } from '.'
 import http from '../http'
+import { IDnsRecordMessage } from '../models/IDnsRecordMessage'
 
 describe('Core module test suite', () => {
 	it('Hash Unit Test', async () => {
@@ -105,125 +106,289 @@ describe('Core module test suite', () => {
 			accountPrivateKey,
 		)
 
-		const blockMetadata = Core.generateMetadata(signedSeedBlock)
+		const blockMetadata = Core.generateBlockMetadata(signedSeedBlock)
 		const block = Core.generateBlock(signedBlockHeader, content, blockMetadata)
 
 		expect(await Core.verifyBlock(block)).toEqual(true)
 	})
 
-	it('Get Domain Name Entry Test', async () => {
+	it('Sign and Verify Message Signature', async () => {
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const content = 'Hello world!'
+
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			content,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const signedMessageHeader = await Core.signMessageHeader(
+			unsignedMessageHeader,
+			blockPrivateKey,
+		)
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const signedMessage = Core.generateMessage(
+			signedMessageHeader,
+			content,
+			messageMetadata,
+		)
+
+		expect(await Core.verifyMessage(signedMessage)).toEqual(true)
+	})
+
+	it('Get DNS Record Test', async () => {
 		// Initializations
-		const username = 'username.stw'
-		const urls = ['username.com', 'username.net']
-		const ips = ['10.10.10.10']
+		const domainName = 'username.stw'
+		const accountPublicKey =
+			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35'
+		const hostingProviderAddresses = [
+			'username.com',
+			'username.net',
+			'10.10.10.10',
+		]
 		// Mocking
-		const dnsEntryResponse = {
-			domainName: username,
-			domainUrls: urls,
-			domainIPs: ips,
+		const dnsRecord = {
+			domainName,
+			accountPublicKey,
+			hostingProviderAddresses,
 		}
 		const httpGet = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 200,
-			json: async () => dnsEntryResponse,
+			json: async () => dnsRecord,
 		}))
 		const httpModule = new http()
 		jest.spyOn(httpModule, 'get').mockImplementation(httpGet)
 		// Test
 		const core = new Core(httpModule)
-		const domainNameEntry = await core.getUserDomainNameEntry(
+		const dnsRecordResponse = await core.getDnsRecord(
 			'username.stw',
 			'http://localhost:3000',
 		)
 
-		expect(domainNameEntry).toBeDefined()
-		if (domainNameEntry) {
-			expect(domainNameEntry).toHaveProperty('domainName', username)
-			expect(domainNameEntry).toHaveProperty('domainUrls', urls)
-			expect(domainNameEntry).toHaveProperty('domainIPs', ips)
+		expect(dnsRecordResponse).toBeDefined()
+		if (dnsRecordResponse) {
+			expect(dnsRecordResponse).toHaveProperty('domainName', domainName)
+			expect(dnsRecordResponse).toHaveProperty(
+				'hostingProviderAddresses',
+				hostingProviderAddresses,
+			)
 		}
 	})
 
-	it('Create Domain Name Entry Test', async () => {
+	it('Create DNS Record Test', async () => {
 		// Initializations
-		const username = 'username.stw'
-		const urls = ['username.com', 'username.net']
-		const ips = ['10.10.10.10']
-		//Mocking
-		const dnsEntryResponse = {
-			domainName: username,
-			domainUrls: urls,
-			domainIPs: ips,
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const domainName = 'username.stw'
+		const hostingProviderAddresses = [
+			'username.com',
+			'username.net',
+			'10.10.10.10',
+		]
+		const dnsRecord = {
+			domainName,
+			accountPublicKey,
+			hostingProviderAddresses,
 		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			dnsRecord,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+			unsignedMessageHeader,
+			dnsRecord,
+			messageMetadata,
+		)
+		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
+			unsignedDnsRecordMessage,
+			blockPrivateKey,
+		)
+		// Mocking
 		const httpPost = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 201,
 		}))
-		const httpModule = new http()
 		jest.spyOn(httpModule, 'post').mockImplementation(httpPost)
 		// Test
-		const core = new Core(httpModule)
-		await core.createUserDomainNameEntry(
-			dnsEntryResponse,
-			'http://localhost:3000',
-		)
 
+		await core.createDnsRecord(signedDnsRecordMessage, 'http://localhost:3000')
 		expect(httpPost).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
 
-	it('Update Domain Name Entry Test', async () => {
+	it('Update Domain Name Record Test', async () => {
 		// Initializations
-		const username = 'username.stw'
-		const urls = ['username.org']
-		const ips = ['10.8.10.8']
-		//Mocking
-		const dnsEntryResponse = {
-			domainName: username,
-			domainUrls: urls,
-			domainIPs: ips,
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const domainName = 'username.stw'
+		const hostingProviderAddresses = [
+			'username.com',
+			'username.net',
+			'10.10.10.10',
+		]
+		const dnsRecord = {
+			domainName,
+			accountPublicKey,
+			hostingProviderAddresses,
 		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			dnsRecord,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+			unsignedMessageHeader,
+			dnsRecord,
+			messageMetadata,
+		)
+		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
+			unsignedDnsRecordMessage,
+			blockPrivateKey,
+		)
+		// Mocking
 		const httpPut = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 204,
 		}))
-		const httpModule = new http()
 		jest.spyOn(httpModule, 'put').mockImplementation(httpPut)
 		// Test
-		const core = new Core(httpModule)
-		await core.updateUserDomainNameEntry(
-			dnsEntryResponse,
-			'http://localhost:3000',
-		)
-
+		await core.updateDnsRecord(signedDnsRecordMessage, 'http://localhost:3000')
 		expect(httpPut).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
 
-	it('Delete Domain Name Entry Test', async () => {
+	it('Delete Domain Name Record Test', async () => {
 		// Initializations
-		const username = 'username.stw'
-		const urls = ['username.org']
-		const ips = ['10.8.10.8']
-		//Mocking
-		const dnsEntryResponse = {
-			domainName: username,
-			domainUrls: urls,
-			domainIPs: ips,
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const domainName = 'username.stw'
+		const hostingProviderAddresses = [
+			'username.com',
+			'username.net',
+			'10.10.10.10',
+		]
+		const dnsRecord = {
+			domainName,
+			accountPublicKey,
+			hostingProviderAddresses,
 		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			dnsRecord,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+			unsignedMessageHeader,
+			dnsRecord,
+			messageMetadata,
+		)
+		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
+			unsignedDnsRecordMessage,
+			blockPrivateKey,
+		)
+		// Mocking
 		const httpDelete = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 204,
 		}))
-		const httpModule = new http()
 		jest.spyOn(httpModule, 'delete').mockImplementation(httpDelete)
 		// Test
-		const core = new Core(httpModule)
-		await core.deleteUserDomainNameEntry(
-			dnsEntryResponse,
-			'http://localhost:3000',
-		)
-
+		await core.deleteDnsRecord(signedDnsRecordMessage, 'http://localhost:3000')
 		expect(httpDelete).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
