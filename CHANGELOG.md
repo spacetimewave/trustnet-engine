@@ -1,3 +1,9 @@
+## 0.6.3 (Feb 16, 2025)
+
+### Account
+
+- **verifyMessage**: Verify message. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.2 (Feb 16, 2025)
 
 ### Models

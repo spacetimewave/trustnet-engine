@@ -15,6 +15,7 @@ import {
 	IUpdateDnsRecordMessage,
 } from '../models/IDnsRecordMessage'
 import { IDnsProvider } from '../models/IDnsProvider'
+import { IMessage } from '../models/IMessage'
 
 export class Account {
 	private core: Core
@@ -378,5 +379,9 @@ export class Account {
 			dnsRecordMessage,
 			nameServer!.nameServerAddress[0],
 		)
+	}
+
+	static async verifyMessage(message: IMessage): Promise<boolean> {
+		return await Core.verifyMessage(message)
 	}
 }
