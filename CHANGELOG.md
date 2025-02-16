@@ -1,3 +1,9 @@
+## 0.6.2 (Feb 16, 2025)
+
+### Models
+
+- **DNS API**: Update DNS API endpoints to perform CRUD endpoints. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.1 (Feb 16, 2025)
 
 ### Models
