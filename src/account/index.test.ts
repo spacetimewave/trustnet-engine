@@ -105,8 +105,8 @@ describe('Account module test suite', () => {
 		const domainName = 'example.stw'
 		const hostingProviderAddresses = ['hosting.spacetimewave.com']
 		const updateDnsRecordMock = jest.fn().mockImplementation(async () => {})
-		jest.spyOn(core, 'createDnsRecord').mockImplementation(updateDnsRecordMock)
-		await account.createDnsRecord(
+		jest.spyOn(core, 'updateDnsRecord').mockImplementation(updateDnsRecordMock)
+		await account.updateDnsRecord(
 			domainName,
 			hostingProviderAddresses,
 			blockKeyPair.privateKey,
@@ -122,14 +122,9 @@ describe('Account module test suite', () => {
 		const { blockKeyPair } = await account.init()
 		// Mock the response
 		const domainName = 'example.stw'
-		const hostingProviderAddresses = ['hosting.spacetimewave.com']
 		const deleteDnsRecordMock = jest.fn().mockImplementation(async () => {})
-		jest.spyOn(core, 'createDnsRecord').mockImplementation(deleteDnsRecordMock)
-		await account.createDnsRecord(
-			domainName,
-			hostingProviderAddresses,
-			blockKeyPair.privateKey,
-		)
+		jest.spyOn(core, 'deleteDnsRecord').mockImplementation(deleteDnsRecordMock)
+		await account.deleteDnsRecord(domainName, blockKeyPair.privateKey)
 
 		expect(deleteDnsRecordMock).toHaveBeenCalled()
 		expect(true).toEqual(true)
