@@ -6,8 +6,14 @@ class http {
 		return response
 	}
 
-	public async get(url: string): Promise<Response> {
-		return this.request(url, { method: 'GET' })
+	public async get(url: string, data?: any): Promise<Response> {
+		return this.request(url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		})
 	}
 
 	public async post(url: string, data?: any): Promise<Response> {
@@ -26,8 +32,12 @@ class http {
 		})
 	}
 
-	public async delete(url: string): Promise<Response> {
-		return this.request(url, { method: 'DELETE' })
+	public async delete(url: string, data?: any): Promise<Response> {
+		return this.request(url, {
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data),
+		})
 	}
 }
 

@@ -1,6 +1,13 @@
 import { Core } from '.'
 import http from '../http'
-import { IDnsRecordMessage } from '../models/IDnsRecordMessage'
+import { IDnsRecord } from '../models/IDnsRecord'
+import {
+	IGetDnsRecordMessage,
+	ICreateDnsRecordMessage,
+	IUpdateDnsRecordMessage,
+	IDeleteDnsRecordMessage,
+	ICreateDnsRecordContent,
+} from '../models/IDnsRecordMessage'
 
 describe('Core module test suite', () => {
 	it('Hash Unit Test', async () => {
@@ -159,16 +166,58 @@ describe('Core module test suite', () => {
 
 	it('Get DNS Record Test', async () => {
 		// Initializations
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
 		const domainName = 'username.stw'
-		const accountPublicKey =
-			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35'
+		const getDnsRecordContent = {
+			domainName,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			getDnsRecordContent,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedDnsRecordMessage: IGetDnsRecordMessage = Core.generateMessage(
+			unsignedMessageHeader,
+			getDnsRecordContent,
+			messageMetadata,
+		)
+		const signedDnsRecordMessage: IGetDnsRecordMessage = await Core.signMessage(
+			unsignedDnsRecordMessage,
+			blockPrivateKey,
+		)
+
+		// Mocking
 		const hostingProviderAddresses = [
 			'username.com',
 			'username.net',
 			'10.10.10.10',
 		]
-		// Mocking
-		const dnsRecord = {
+		const dnsRecordExpectedResponse = {
 			domainName,
 			accountPublicKey,
 			hostingProviderAddresses,
@@ -176,14 +225,13 @@ describe('Core module test suite', () => {
 		const httpGet = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 200,
-			json: async () => dnsRecord,
+			json: async () => dnsRecordExpectedResponse,
 		}))
-		const httpModule = new http()
+
 		jest.spyOn(httpModule, 'get').mockImplementation(httpGet)
 		// Test
-		const core = new Core(httpModule)
 		const dnsRecordResponse = await core.getDnsRecord(
-			'username.stw',
+			signedDnsRecordMessage,
 			'http://localhost:3000',
 		)
 
@@ -228,28 +276,30 @@ describe('Core module test suite', () => {
 			'username.net',
 			'10.10.10.10',
 		]
-		const dnsRecord = {
+		const dnsRecord: IDnsRecord = {
 			domainName,
 			accountPublicKey,
 			hostingProviderAddresses,
 		}
-		const unsignedMessageHeader = await Core.generateMessageHeader(
+		const createDnsRecordContent: ICreateDnsRecordContent = {
 			dnsRecord,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			createDnsRecordContent,
 			accountPublicKey,
 			blockPublicKey,
 			1,
 		)
 
 		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
-		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
-			unsignedMessageHeader,
-			dnsRecord,
-			messageMetadata,
-		)
-		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
-			unsignedDnsRecordMessage,
-			blockPrivateKey,
-		)
+		const unsignedDnsRecordMessage: ICreateDnsRecordMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				createDnsRecordContent,
+				messageMetadata,
+			)
+		const signedDnsRecordMessage: ICreateDnsRecordMessage =
+			await Core.signMessage(unsignedDnsRecordMessage, blockPrivateKey)
 		// Mocking
 		const httpPost = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -294,28 +344,30 @@ describe('Core module test suite', () => {
 			'username.net',
 			'10.10.10.10',
 		]
-		const dnsRecord = {
+		const dnsRecord: IDnsRecord = {
 			domainName,
 			accountPublicKey,
 			hostingProviderAddresses,
 		}
-		const unsignedMessageHeader = await Core.generateMessageHeader(
+		const createDnsRecordContent: ICreateDnsRecordContent = {
 			dnsRecord,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			createDnsRecordContent,
 			accountPublicKey,
 			blockPublicKey,
 			1,
 		)
 
 		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
-		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
-			unsignedMessageHeader,
-			dnsRecord,
-			messageMetadata,
-		)
-		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
-			unsignedDnsRecordMessage,
-			blockPrivateKey,
-		)
+		const unsignedDnsRecordMessage: IUpdateDnsRecordMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				createDnsRecordContent,
+				messageMetadata,
+			)
+		const signedDnsRecordMessage: IUpdateDnsRecordMessage =
+			await Core.signMessage(unsignedDnsRecordMessage, blockPrivateKey)
 		// Mocking
 		const httpPut = jest.fn().mockImplementation(async () => ({
 			ok: true,
@@ -354,33 +406,25 @@ describe('Core module test suite', () => {
 		)
 
 		const domainName = 'username.stw'
-		const hostingProviderAddresses = [
-			'username.com',
-			'username.net',
-			'10.10.10.10',
-		]
-		const dnsRecord = {
+		const deleteDnsRecordContent = {
 			domainName,
-			accountPublicKey,
-			hostingProviderAddresses,
 		}
 		const unsignedMessageHeader = await Core.generateMessageHeader(
-			dnsRecord,
+			deleteDnsRecordContent,
 			accountPublicKey,
 			blockPublicKey,
 			1,
 		)
 
 		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
-		const unsignedDnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
-			unsignedMessageHeader,
-			dnsRecord,
-			messageMetadata,
-		)
-		const signedDnsRecordMessage: IDnsRecordMessage = await Core.signMessage(
-			unsignedDnsRecordMessage,
-			blockPrivateKey,
-		)
+		const unsignedDnsRecordMessage: IDeleteDnsRecordMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				deleteDnsRecordContent,
+				messageMetadata,
+			)
+		const signedDnsRecordMessage: IDeleteDnsRecordMessage =
+			await Core.signMessage(unsignedDnsRecordMessage, blockPrivateKey)
 		// Mocking
 		const httpDelete = jest.fn().mockImplementation(async () => ({
 			ok: true,

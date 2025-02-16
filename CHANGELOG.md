@@ -1,3 +1,12 @@
+## 0.6.1 (Feb 16, 2025)
+
+### Models
+
+- **IGetDnsRecordContent and IGetDnsRecordMessage**: Get Dns Record Message Content Definition. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateDnsRecordContent and ICreateDnsRecordMessage**: Create Dns Record Message Content Definition. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IUpdateDnsRecordContent and IUpdateDnsRecordMessage**: Update Dns Record Message Content Definition. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDeleteDnsRecordContent and IDeleteDnsRecordMessage**: Delete Dns Record Message Content Definition. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.0 (Feb 10, 2025)
 
 ### Account

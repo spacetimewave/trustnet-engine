@@ -54,11 +54,10 @@ describe('Account module test suite', () => {
 	it('Get Dns Record', async () => {
 		const core = new Core()
 		const account = new Account(core)
-		await account.init()
+		await account.init(true)
 		// Mock the response
 		const domainName = 'example.stw'
-		const accountPublicKey =
-			'0x9a59efbc471b53491c8038fd5d5fe3be0a229873302bafba90c19fbe7d7c7f35'
+		const accountPublicKey = account.accountPublicKey
 		const hostingProviderAddresses = ['hosting.spacetimewave.com']
 		const getDnsRecordMock = jest.fn().mockImplementation(async () => ({
 			domainName,
@@ -66,10 +65,7 @@ describe('Account module test suite', () => {
 			hostingProviderAddresses,
 		}))
 		jest.spyOn(core, 'getDnsRecord').mockImplementation(getDnsRecordMock)
-		const dnsRecord = await account.getDnsRecord(
-			'example.stw',
-			'dns.spacetimewave.com',
-		)
+		const dnsRecord = await account.getDnsRecord('example.stw')
 
 		expect(dnsRecord).toBeDefined()
 		if (dnsRecord) {

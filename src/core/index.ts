@@ -6,7 +6,12 @@ import type { IBlockHeader } from '../models/IBlockHeader'
 import type { IBlockMetadata } from '../models/IBlockMetadata'
 import { IDnsProvider } from '../models/IDnsProvider'
 import { IDnsRecord } from '../models/IDnsRecord'
-import { IDnsRecordMessage } from '../models/IDnsRecordMessage'
+import {
+	IGetDnsRecordMessage,
+	ICreateDnsRecordMessage,
+	IUpdateDnsRecordMessage,
+	IDeleteDnsRecordMessage,
+} from '../models/IDnsRecordMessage'
 import type { IKeyPair } from '../models/IKeyPair'
 import { IMessage } from '../models/IMessage'
 import { IMessageHeader } from '../models/IMessageHeader'
@@ -287,11 +292,12 @@ export class Core {
 	}
 
 	public async getDnsRecord(
-		domainName: string,
+		dnsRecordMessage: IGetDnsRecordMessage,
 		nameServerAddress: string,
 	): Promise<IDnsRecord | undefined> {
 		const response = await this.http.get(
-			`${nameServerAddress}/api/v1/dns/${domainName}`,
+			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			dnsRecordMessage,
 		)
 
 		if (response.status === 404 || !response.ok) {
@@ -304,11 +310,11 @@ export class Core {
 	}
 
 	public async createDnsRecord(
-		dnsRecordMessage: IDnsRecordMessage,
+		dnsRecordMessage: ICreateDnsRecordMessage,
 		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.post(
-			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.dnsRecord.domainName}`,
 			dnsRecordMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
@@ -319,11 +325,11 @@ export class Core {
 	}
 
 	public async updateDnsRecord(
-		dnsRecordMessage: IDnsRecordMessage,
+		dnsRecordMessage: IUpdateDnsRecordMessage,
 		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.put(
-			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			`${nameServerAddress}/api/v1/dns/${dnsRecordMessage.content.dnsRecord.domainName}`,
 			dnsRecordMessage,
 		)
 		if (response.status === 204 || response.status === 200) {
@@ -334,11 +340,12 @@ export class Core {
 	}
 
 	public async deleteDnsRecord(
-		dnsRecordMessage: IDnsRecordMessage,
+		dnsRecordMessage: IDeleteDnsRecordMessage,
 		domainAddress: string,
 	): Promise<void> {
 		const response = await this.http.delete(
 			`${domainAddress}/api/v1/dns/${dnsRecordMessage.content.domainName}`,
+			dnsRecordMessage,
 		)
 		if (response.status === 200 || response.status === 204) {
 			return

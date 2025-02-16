@@ -4,7 +4,16 @@ import { Core } from '../core'
 import { IKeyPair } from '../models/IKeyPair'
 import { ISeedBlock } from '../models/ISeedBlock'
 import { IDnsRecord } from '../models/IDnsRecord'
-import { IDnsRecordMessage } from '../models/IDnsRecordMessage'
+import {
+	ICreateDnsRecordContent,
+	ICreateDnsRecordMessage,
+	IDeleteDnsRecordContent,
+	IDeleteDnsRecordMessage,
+	IGetDnsRecordContent,
+	IGetDnsRecordMessage,
+	IUpdateDnsRecordContent,
+	IUpdateDnsRecordMessage,
+} from '../models/IDnsRecordMessage'
 import { IDnsProvider } from '../models/IDnsProvider'
 
 export class Account {
@@ -214,9 +223,38 @@ export class Account {
 
 	public async getDnsRecord(
 		domainName: string,
-		nameServerAddress: string,
+		blockPrivateKey?: string,
 	): Promise<IDnsRecord | undefined> {
-		return await this.core.getDnsRecord(domainName, nameServerAddress)
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		if (blockPrivateKey === undefined && !this.isBlockPrivateKeyInitialized()) {
+			throw new Error('Private key not initialized')
+		}
+		const getDnsRecordContent: IGetDnsRecordContent = {
+			domainName: domainName,
+		}
+		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			getDnsRecordContent,
+			this.accountPublicKey!,
+			blockPrivateKey ?? this.blockPrivateKey!,
+		)
+		const signedMessageHeader = await Core.signMessageHeader(
+			unsignedMessageHeader,
+			blockPrivateKey ?? this.blockPrivateKey!,
+		)
+
+		const getDnsRecordMessage: IGetDnsRecordMessage = Core.generateMessage(
+			signedMessageHeader,
+			getDnsRecordContent,
+			messageMetadata,
+		)
+		const nameServer = await Account.getNameServerByDomain(domainName)
+		return await this.core.getDnsRecord(
+			getDnsRecordMessage,
+			nameServer!.nameServerAddress[0],
+		)
 	}
 
 	public async createDnsRecord(
@@ -236,9 +274,12 @@ export class Account {
 			accountPublicKey: this.accountPublicKey!,
 			hostingProviderAddresses: hostingProviderAddresses,
 		}
+		const createDnsRecordContent: ICreateDnsRecordContent = {
+			dnsRecord: dnsRecord,
+		}
 		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
 		const unsignedMessageHeader = await Core.generateMessageHeader(
-			dnsRecord,
+			createDnsRecordContent,
 			this.accountPublicKey!,
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
@@ -247,9 +288,9 @@ export class Account {
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
 
-		const dnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+		const dnsRecordMessage: ICreateDnsRecordMessage = Core.generateMessage(
 			signedMessageHeader,
-			dnsRecord,
+			createDnsRecordContent,
 			messageMetadata,
 		)
 		const nameServer = await Account.getNameServerByDomain(domainName)
@@ -276,9 +317,12 @@ export class Account {
 			accountPublicKey: this.accountPublicKey!,
 			hostingProviderAddresses: hostingProviderAddresses,
 		}
+		const updateDnsRecordContent: IUpdateDnsRecordContent = {
+			dnsRecord: dnsRecord,
+		}
 		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
 		const unsignedMessageHeader = await Core.generateMessageHeader(
-			dnsRecord,
+			updateDnsRecordContent,
 			this.accountPublicKey!,
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
@@ -287,9 +331,9 @@ export class Account {
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
 
-		const dnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+		const dnsRecordMessage: IUpdateDnsRecordMessage = Core.generateMessage(
 			signedMessageHeader,
-			dnsRecord,
+			updateDnsRecordContent,
 			messageMetadata,
 		)
 		const nameServer = await Account.getNameServerByDomain(domainName)
@@ -302,7 +346,6 @@ export class Account {
 
 	public async deleteDnsRecord(
 		domainName: string,
-		hostingProviderAddresses: string[],
 		blockPrivateKey?: string,
 	): Promise<void> {
 		if (!this.isAccountInitialized()) {
@@ -311,14 +354,12 @@ export class Account {
 		if (blockPrivateKey === undefined && !this.isBlockPrivateKeyInitialized()) {
 			throw new Error('Private key not initialized')
 		}
-		const dnsRecord: IDnsRecord = {
+		const deleteDnsRecordContent: IDeleteDnsRecordContent = {
 			domainName: domainName,
-			accountPublicKey: this.accountPublicKey!,
-			hostingProviderAddresses: hostingProviderAddresses,
 		}
 		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
 		const unsignedMessageHeader = await Core.generateMessageHeader(
-			dnsRecord,
+			deleteDnsRecordContent,
 			this.accountPublicKey!,
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
@@ -327,9 +368,9 @@ export class Account {
 			blockPrivateKey ?? this.blockPrivateKey!,
 		)
 
-		const dnsRecordMessage: IDnsRecordMessage = Core.generateMessage(
+		const dnsRecordMessage: IDeleteDnsRecordMessage = Core.generateMessage(
 			signedMessageHeader,
-			dnsRecord,
+			deleteDnsRecordContent,
 			messageMetadata,
 		)
 		const nameServer = await Account.getNameServerByDomain(domainName)
