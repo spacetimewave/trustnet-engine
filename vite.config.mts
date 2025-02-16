@@ -13,7 +13,8 @@ export default defineConfig({
 		lib: {
 			entry: resolve(__dirname, 'src/index.ts'),
 			name: 'trustnet-engine',
-			fileName: 'trustnet-engine',
+			fileName: (format) =>
+				`trustnet-engine.${format === 'cjs' ? 'cjs' : 'js'}`,
 			formats: ['es', 'cjs'],
 		},
 		rollupOptions: {

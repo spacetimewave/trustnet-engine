@@ -1,3 +1,9 @@
+## 0.6.4 to 0.6.9 (Feb 16, 2025)
+
+### Account
+
+- **ESModules and CommonJS**: Change ViteJS build mode. Build for NodeJS (CommonJS) and Browser (ESModules). ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.3 (Feb 16, 2025)
 
 ### Account
