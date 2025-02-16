@@ -84,7 +84,10 @@ describe('Account module test suite', () => {
 		const { blockKeyPair } = await account.init()
 		// Mock the response
 		const domainName = 'example.stw'
-		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const hostingProviderAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+		]
 		const createDnsRecordMock = jest.fn().mockImplementation(async () => {})
 		jest.spyOn(core, 'createDnsRecord').mockImplementation(createDnsRecordMock)
 		await account.createDnsRecord(
@@ -103,7 +106,11 @@ describe('Account module test suite', () => {
 		const { blockKeyPair } = await account.init()
 		// Mock the response
 		const domainName = 'example.stw'
-		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const hostingProviderAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+			'hosting.wave.com',
+		]
 		const updateDnsRecordMock = jest.fn().mockImplementation(async () => {})
 		jest.spyOn(core, 'updateDnsRecord').mockImplementation(updateDnsRecordMock)
 		await account.updateDnsRecord(
