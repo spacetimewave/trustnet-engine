@@ -2,7 +2,7 @@
 
 ### Account
 
-- **DNS**: DNS fix. Use Block and Account public keys to generate header. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **DNS**: DNS fix. Use Block and Account public keys to generate message header. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
 
 ## 0.6.4 to 0.6.9 (Feb 16, 2025)
 
