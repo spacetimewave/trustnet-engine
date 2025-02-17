@@ -239,7 +239,7 @@ export class Account {
 		const unsignedMessageHeader = await Core.generateMessageHeader(
 			getDnsRecordContent,
 			this.accountPublicKey!,
-			blockPrivateKey ?? this.blockPrivateKey!,
+			this.blockPublicKey!,
 		)
 		const signedMessageHeader = await Core.signMessageHeader(
 			unsignedMessageHeader,
@@ -282,7 +282,7 @@ export class Account {
 		const unsignedMessageHeader = await Core.generateMessageHeader(
 			createDnsRecordContent,
 			this.accountPublicKey!,
-			blockPrivateKey ?? this.blockPrivateKey!,
+			this.blockPublicKey!,
 		)
 		const signedMessageHeader = await Core.signMessageHeader(
 			unsignedMessageHeader,
@@ -325,7 +325,7 @@ export class Account {
 		const unsignedMessageHeader = await Core.generateMessageHeader(
 			updateDnsRecordContent,
 			this.accountPublicKey!,
-			blockPrivateKey ?? this.blockPrivateKey!,
+			this.blockPublicKey!,
 		)
 		const signedMessageHeader = await Core.signMessageHeader(
 			unsignedMessageHeader,
@@ -362,7 +362,7 @@ export class Account {
 		const unsignedMessageHeader = await Core.generateMessageHeader(
 			deleteDnsRecordContent,
 			this.accountPublicKey!,
-			blockPrivateKey ?? this.blockPrivateKey!,
+			this.blockPublicKey!,
 		)
 		const signedMessageHeader = await Core.signMessageHeader(
 			unsignedMessageHeader,
