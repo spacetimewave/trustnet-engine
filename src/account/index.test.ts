@@ -163,7 +163,10 @@ describe('Account module test suite', () => {
 		const nameServer = await Account.getNameServerByDomain(domainName)
 		expect(nameServer).toEqual({
 			domainExtension: 'stw',
-			nameServerAddress: ['localhost:3000', 'dns.spacetimewave.com'],
+			nameServerAddress: [
+				'http://localhost:3000',
+				'https://dns.spacetimewave.com',
+			],
 		})
 	})
 
