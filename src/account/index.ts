@@ -34,13 +34,13 @@ export class Account {
 		this.core = core ?? new Core()
 	}
 
-	async init(
-		saveBlockPrivateKey?: boolean,
-	): Promise<{ accountKeyPair: IKeyPair; blockKeyPair: IKeyPair }> {
+	async init(): Promise<{ accountKeyPair: IKeyPair; blockKeyPair: IKeyPair }> {
 		const accountKeyPair = await Core.generateSignatureKeyPair()
 		const blockKeyPair = await Core.generateSignatureKeyPair()
 		this.accountPublicKey = accountKeyPair.publicKey
 		this.blockPublicKey = blockKeyPair.publicKey
+		this.blockPrivateKey = blockKeyPair.privateKey
+
 		this.accountBlocks = []
 		this.seedBlock = await Core.generateSeedBlock(
 			accountKeyPair.publicKey,
@@ -54,14 +54,18 @@ export class Account {
 			accountKeyPair.privateKey,
 		)
 
-		if (saveBlockPrivateKey) {
-			this.blockPrivateKey = blockKeyPair.privateKey
-		}
-
 		return {
 			accountKeyPair: accountKeyPair,
 			blockKeyPair: blockKeyPair,
 		}
+	}
+
+	async login(blockPrivateKeyPair: string, seedBlock: ISeedBlock) {
+		this.accountPublicKey = seedBlock.address
+		this.blockPublicKey = seedBlock.public_key
+		this.blockPrivateKey = blockPrivateKeyPair
+		this.seedBlock = seedBlock
+		this.accountBlocks = []
 	}
 
 	isAccountInitialized(): boolean {

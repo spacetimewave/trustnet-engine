@@ -1,3 +1,10 @@
+## 0.7.0 (Feb 28, 2025)
+
+### Account
+
+- **init**: Save block private key by default | **BREAKING CHANGE** ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **login**: Login with seed block and block private key. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.11 (Feb 28, 2025)
 
 ### Core
