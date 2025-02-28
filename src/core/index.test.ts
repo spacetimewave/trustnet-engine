@@ -228,7 +228,7 @@ describe('Core module test suite', () => {
 			json: async () => dnsRecordExpectedResponse,
 		}))
 
-		jest.spyOn(httpModule, 'get').mockImplementation(httpGet)
+		jest.spyOn(httpModule, 'post').mockImplementation(httpGet)
 		// Test
 		const dnsRecordResponse = await core.getDnsRecord(
 			signedDnsRecordMessage,
@@ -373,7 +373,7 @@ describe('Core module test suite', () => {
 			ok: true,
 			status: 204,
 		}))
-		jest.spyOn(httpModule, 'put').mockImplementation(httpPut)
+		jest.spyOn(httpModule, 'post').mockImplementation(httpPut)
 		// Test
 		await core.updateDnsRecord(signedDnsRecordMessage, 'http://localhost:3000')
 		expect(httpPut).toHaveBeenCalled()
@@ -430,7 +430,7 @@ describe('Core module test suite', () => {
 			ok: true,
 			status: 204,
 		}))
-		jest.spyOn(httpModule, 'delete').mockImplementation(httpDelete)
+		jest.spyOn(httpModule, 'post').mockImplementation(httpDelete)
 		// Test
 		await core.deleteDnsRecord(signedDnsRecordMessage, 'http://localhost:3000')
 		expect(httpDelete).toHaveBeenCalled()

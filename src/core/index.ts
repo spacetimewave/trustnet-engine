@@ -295,8 +295,8 @@ export class Core {
 		dnsRecordMessage: IGetDnsRecordMessage,
 		nameServerAddress: string,
 	): Promise<IDnsRecord | undefined> {
-		const response = await this.http.get(
-			`${nameServerAddress}/api/v1/dns/record`,
+		const response = await this.http.post(
+			`${nameServerAddress}/api/v1/dns/record/get`,
 			dnsRecordMessage,
 		)
 
@@ -314,7 +314,7 @@ export class Core {
 		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.post(
-			`${nameServerAddress}/api/v1/dns/record`,
+			`${nameServerAddress}/api/v1/dns/record/create`,
 			dnsRecordMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
@@ -328,8 +328,8 @@ export class Core {
 		dnsRecordMessage: IUpdateDnsRecordMessage,
 		nameServerAddress: string,
 	): Promise<void> {
-		const response = await this.http.put(
-			`${nameServerAddress}/api/v1/dns/record`,
+		const response = await this.http.post(
+			`${nameServerAddress}/api/v1/dns/record/update`,
 			dnsRecordMessage,
 		)
 		if (response.status === 204 || response.status === 200) {
@@ -343,8 +343,8 @@ export class Core {
 		dnsRecordMessage: IDeleteDnsRecordMessage,
 		domainAddress: string,
 	): Promise<void> {
-		const response = await this.http.delete(
-			`${domainAddress}/api/v1/dns/record`,
+		const response = await this.http.post(
+			`${domainAddress}/api/v1/dns/record/delete`,
 			dnsRecordMessage,
 		)
 		if (response.status === 200 || response.status === 204) {

@@ -1,3 +1,9 @@
+## 0.6.11 (Feb 28, 2025)
+
+### Core
+
+- **DNS**: DNS fix. Now DNS requests use HTTP POST protocol. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.6.10 (Feb 17, 2025)
 
 ### Account
