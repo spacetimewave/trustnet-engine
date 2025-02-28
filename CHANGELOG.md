@@ -1,3 +1,9 @@
+## 0.7.1 (Feb 28, 2025)
+
+### Core
+
+- **DNS**: Update ".stw" dns provider resolution ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.7.0 (Feb 28, 2025)
 
 ### Account
