@@ -1,3 +1,9 @@
+## 0.8.1 (Mar 1, 2025)
+
+### Account
+
+- **verifySeedBlock**: Verify Seed Block with account or static methods ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.8.0 (Mar 1, 2025)
 
 ### Account

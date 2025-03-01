@@ -10,6 +10,20 @@ describe('Account module test suite', () => {
 		expect(verification).toEqual(true)
 	})
 
+	it('Verify Seed Block', async () => {
+		const account = new Account()
+		await account.init()
+		const verification = await account.verifySeedBlock()
+		expect(verification).toEqual(true)
+	})
+
+	it('Verify Seed Block Static', async () => {
+		const account = new Account()
+		await account.init()
+		const verification = await Account.verifySeedBlock(account.seedBlock!)
+		expect(verification).toEqual(true)
+	})
+
 	it('Create block', async () => {
 		const account = new Account()
 		const { blockKeyPair } = await account.init()

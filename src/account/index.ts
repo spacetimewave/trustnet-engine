@@ -227,6 +227,10 @@ export class Account {
 		return await Core.verifySeedBlockSignature(this.seedBlock!)
 	}
 
+	static async verifySeedBlock(seedBlock: ISeedBlock): Promise<boolean> {
+		return await Core.verifySeedBlockSignature(seedBlock)
+	}
+
 	async exportAccount(): Promise<IAccount> {
 		return {
 			seedBlock: this.seedBlock!,
