@@ -6,3 +6,8 @@ export interface IMessage {
 	content: any
 	metadata: IMessageMetadata
 }
+
+export interface IUnauthenticatedMessage {
+	header?: IMessageHeader
+	content: any
+}

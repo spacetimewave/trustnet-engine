@@ -40,7 +40,6 @@ export class Cryptography {
 			)
 			return this.hexEncode(this.abtos(signature))
 		} catch (err) {
-			console.log(err)
 			throw Error()
 		}
 	}

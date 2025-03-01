@@ -1,30 +1,11 @@
 import { Account } from '.'
 import { Core } from '../core'
-import { ISeedBlock } from '../models/ISeedBlock'
+// import { ISeedBlock } from '../models/ISeedBlock'
 
 describe('Account module test suite', () => {
 	it('Account initialization', async () => {
 		const account = new Account()
 		await account.init()
-		const verification = await account.verifySeedBlock()
-		expect(verification).toEqual(true)
-	})
-
-	it('Account login', async () => {
-		const account = new Account()
-		const blockPrivateKey =
-			'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgqMoGPTZa4VNdH4igg5ozVCvZye77j55oCP8RVm0p782hRANCAARratd8ZHk7rnRxt42qKnCWXNo8aPU9jcazKd153okkNuZLrTig3BB9C6MkEv2s2zxzxIY0paMngEAfFCqIkXS9'
-		const seedBlock: ISeedBlock = {
-			version: 1,
-			address:
-				'0x000400a600b000b3001a009b0069009e0067002e003600760071001d006a0051001b006a000100f6001a00a4004000a1003e0046000b00ea0079009a00dd00820064001b0036003700e60070000300b900f0006f0002001d00f7006d004f00c4003000da0027008900a90016002d00b900f10073002b0019004c00e7006900fe00b5',
-			public_key:
-				'0x000400fa009d005400470078001b0088006d005100c7000f005e00940031009e001b00a9002200380080003100e9007500d00092006500e5006800d600610092006100ab00ef007f007d006900f700e10099004400fd009d00c1008f0014002d002200ca002d004d006c006c002300de00c300c900c200a300900086008800890089',
-			update_id: 1,
-			signature:
-				'0x00e70014001b008700600015009e008d00cf003c009400f2006f009a00f00075005f0044003c001a002e00b20051006b00a700c000d50066000e00ce0045007e00d9003e00150003006200bb00890043004a000e00fe007500fe001800650091007300fa000f001700e5003000ab0001006300c2008d004b002e0025001b0019',
-		}
-		await account.login(blockPrivateKey, seedBlock)
 		const verification = await account.verifySeedBlock()
 		expect(verification).toEqual(true)
 	})
@@ -86,6 +67,37 @@ describe('Account module test suite', () => {
 		}))
 		jest.spyOn(core, 'getDnsRecord').mockImplementation(getDnsRecordMock)
 		const dnsRecord = await account.getDnsRecord('example.stw')
+
+		expect(dnsRecord).toBeDefined()
+		if (dnsRecord) {
+			expect(dnsRecord).toHaveProperty('domainName', domainName)
+			expect(dnsRecord).toHaveProperty('accountPublicKey', accountPublicKey)
+			expect(dnsRecord).toHaveProperty(
+				'hostingProviderAddresses',
+				hostingProviderAddresses,
+			)
+		}
+	})
+
+	it('Get Dns Record Unauthenticated', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		await account.init()
+		// Mock the response
+		const domainName = 'example.stw'
+		const accountPublicKey = account.accountPublicKey
+		const hostingProviderAddresses = ['hosting.spacetimewave.com']
+		const getDnsRecordUnauthenticated = jest
+			.fn()
+			.mockImplementation(async () => ({
+				domainName,
+				accountPublicKey,
+				hostingProviderAddresses,
+			}))
+		jest
+			.spyOn(core, 'getDnsRecordUnauthenticated')
+			.mockImplementation(getDnsRecordUnauthenticated)
+		const dnsRecord = await account.getDnsRecordUnauthenticated('example.stw')
 
 		expect(dnsRecord).toBeDefined()
 		if (dnsRecord) {
@@ -179,5 +191,53 @@ describe('Account module test suite', () => {
 		} catch {
 			expect(true).toEqual(true)
 		}
+	})
+
+	it('Account login', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const domainName = 'example.stw'
+		const blockPrivateKey =
+			'MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgglrLerfi3kGgJ7cqnT694DszzQxGIqvyu2rV9DobxnahRANCAATajZq5ts+fH/m2e5trFyhwNzhyT/FOcISKp0qfM+5ry7etpSGcA9bcY4WfrgJ34TUOG4PxS+bXXCWauRsml0vw'
+
+		// Mocking
+		const createAccountSeedBlockResponse = {
+			version: 1,
+			address:
+				'0x000400c100a4004e003d006500f900b6005c00620057004600d8006b002f0028002300dd002a008c00ba008e00b200f000b6007e009800f2005a00760013008000ec00bd000700a800e200b2008300c400f2003e0015008e001c0018006000f000110011001f0007004c005d000b00cb004d008e00a40057007600190081000e0096',
+			public_key:
+				'0x000400da008d009a00b900b600cf009f001f00f900b6007b009b006b001700280070003700380072004f00f1004e00700084008a00a7004a009f003300ee006b00cb00b700ad00a50021009c000300d600dc00630085009f00ae0002007700e10035000e001b008300f1004b00e600d7005c0025009a00b9001b00260097004b00f0',
+			update_id: 1,
+			signature:
+				'0x0031009900bf008e0003009d00f900ac007100b700c900dc004e003e00a40071008a007b001400e60019003100e1009f00750087000a0023007c002f0012008100160077009c005000b400650030003700d900d0009500ae00ba00c200b900db00bc003100fe00ce009000a90041007900740008004d00a1009b000d009b00a9',
+		}
+		const getAccountSeedBlockByUsernameUnauthenticated = jest
+			.fn()
+			.mockImplementation(async () => createAccountSeedBlockResponse)
+		jest
+			.spyOn(core, 'getAccountSeedBlockByUsernameUnauthenticated')
+			.mockImplementation(getAccountSeedBlockByUsernameUnauthenticated)
+
+		// Test
+		await account.login(domainName, blockPrivateKey)
+		const verification = await account.verifySeedBlock()
+		expect(verification).toEqual(true)
+	})
+
+	it('Account signup', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		// Mocking
+		const createAccountSeedBlock = jest
+			.fn()
+			.mockImplementation(async () => ({})) // It should return a seed block (but for this case an empty object is enough)
+		jest
+			.spyOn(core, 'createAccountSeedBlock')
+			.mockImplementation(createAccountSeedBlock)
+
+		// Test
+		await account.signup(['https://hosting.provider.com'])
+		const verification = await account.verifySeedBlock()
+		expect(verification).toEqual(true)
 	})
 })

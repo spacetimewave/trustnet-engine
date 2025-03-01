@@ -11,6 +11,7 @@ import {
 	IDeleteDnsRecordMessage,
 	IGetDnsRecordContent,
 	IGetDnsRecordMessage,
+	IGetDnsRecordUnauthenticatedMessage,
 	IUpdateDnsRecordContent,
 	IUpdateDnsRecordMessage,
 } from '../models/IDnsRecordMessage'
@@ -27,7 +28,7 @@ export class Account {
 	// public accountDomains: IDomainName[] = []
 	// public accountDomainRoutes: IDomainNameRoute[] = []
 
-	private seedBlock?: ISeedBlock
+	public seedBlock?: ISeedBlock
 	private accountBlocks: IBlock[] = []
 
 	constructor(core: Core | undefined = undefined) {
@@ -60,12 +61,34 @@ export class Account {
 		}
 	}
 
-	async login(blockPrivateKeyPair: string, seedBlock: ISeedBlock) {
+	async login(domainName: string, blockPrivateKeyPair: string) {
+		const seedBlock =
+			await this.core.getAccountSeedBlockByUsernameUnauthenticated(domainName)
+
+		if (seedBlock === undefined) {
+			throw new Error('Seed block not found')
+		}
 		this.accountPublicKey = seedBlock.address
 		this.blockPublicKey = seedBlock.public_key
 		this.blockPrivateKey = blockPrivateKeyPair
 		this.seedBlock = seedBlock
 		this.accountBlocks = []
+	}
+
+	async signup(hostingProviderAddresses: string[]) {
+		const { accountKeyPair, blockKeyPair } = await this.init()
+		const seedBlock = await this.core.createAccountSeedBlock(
+			this.seedBlock!,
+			hostingProviderAddresses,
+		)
+		if (seedBlock === undefined) {
+			throw new Error('Could not create seed block')
+		}
+
+		return {
+			accountKeyPair: accountKeyPair,
+			blockKeyPair: blockKeyPair,
+		}
 	}
 
 	isAccountInitialized(): boolean {
@@ -224,6 +247,25 @@ export class Account {
 	): Promise<IDnsProvider | undefined> {
 		const nameServer = await Core.getNameServerByDomain(domainName)
 		return nameServer
+	}
+
+	public async getDnsRecordUnauthenticated(
+		domainName: string,
+	): Promise<IDnsRecord | undefined> {
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		const getDnsRecordContent: IGetDnsRecordContent = {
+			domainName: domainName,
+		}
+
+		const getDnsRecordMessage: IGetDnsRecordUnauthenticatedMessage =
+			Core.generateUnathenticatedMessage(getDnsRecordContent)
+		const nameServer = await Account.getNameServerByDomain(domainName)
+		return await this.core.getDnsRecordUnauthenticated(
+			getDnsRecordMessage,
+			nameServer!.nameServerAddress[0],
+		)
 	}
 
 	public async getDnsRecord(

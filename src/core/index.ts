@@ -11,12 +11,17 @@ import {
 	ICreateDnsRecordMessage,
 	IUpdateDnsRecordMessage,
 	IDeleteDnsRecordMessage,
+	IGetDnsRecordUnauthenticatedMessage,
 } from '../models/IDnsRecordMessage'
 import type { IKeyPair } from '../models/IKeyPair'
-import { IMessage } from '../models/IMessage'
+import { IMessage, IUnauthenticatedMessage } from '../models/IMessage'
 import { IMessageHeader } from '../models/IMessageHeader'
 import { IMessageMetadata } from '../models/IMessageMetadata'
 import type { ISeedBlock } from '../models/ISeedBlock'
+import {
+	ICreateAccountSeedBlockMessage,
+	IGetAccountSeedBlockUnauthenticatedMessage,
+} from '../models/IAccountMessage'
 
 export class Core {
 	public http: http
@@ -213,6 +218,14 @@ export class Core {
 		return message
 	}
 
+	public static generateUnathenticatedMessage(
+		content: any,
+		header?: IMessageHeader,
+	): IUnauthenticatedMessage {
+		const message: IUnauthenticatedMessage = { header, content }
+		return message
+	}
+
 	public static async signMessageHeader(
 		header: IMessageHeader,
 		privateKey: string,
@@ -227,6 +240,17 @@ export class Core {
 		message: IMessage,
 		privateKey: string,
 	): Promise<IMessage> {
+		message.header = await this.signMessageHeader(message.header, privateKey)
+		return message
+	}
+
+	public static async signUnauthenticatedMessage(
+		message: IUnauthenticatedMessage,
+		privateKey: string,
+	): Promise<IUnauthenticatedMessage> {
+		if (!message.header) {
+			throw new Error('Message header is undefined')
+		}
 		message.header = await this.signMessageHeader(message.header, privateKey)
 		return message
 	}
@@ -291,6 +315,23 @@ export class Core {
 		return NAME_SERVERS.find((ns) => ns.domainExtension === domainExtension)
 	}
 
+	public async getDnsRecordUnauthenticated(
+		dnsRecordMessage: IGetDnsRecordUnauthenticatedMessage,
+		nameServerAddress: string,
+	): Promise<IDnsRecord | undefined> {
+		const response = await this.http.post(
+			`${nameServerAddress}/api/v1/dns/record/get?auth=false`,
+			dnsRecordMessage,
+		)
+
+		if (response.status === 404 || !response.ok) {
+			return undefined
+		}
+
+		const dnsRecord: IDnsRecord = await response.json()
+		return dnsRecord
+	}
+
 	public async getDnsRecord(
 		dnsRecordMessage: IGetDnsRecordMessage,
 		nameServerAddress: string,
@@ -301,7 +342,6 @@ export class Core {
 		)
 
 		if (response.status === 404 || !response.ok) {
-			console.log(response)
 			return undefined
 		}
 
@@ -341,10 +381,10 @@ export class Core {
 
 	public async deleteDnsRecord(
 		dnsRecordMessage: IDeleteDnsRecordMessage,
-		domainAddress: string,
+		nameServerAddress: string,
 	): Promise<void> {
 		const response = await this.http.post(
-			`${domainAddress}/api/v1/dns/record/delete`,
+			`${nameServerAddress}/api/v1/dns/record/delete`,
 			dnsRecordMessage,
 		)
 		if (response.status === 200 || response.status === 204) {
@@ -354,12 +394,74 @@ export class Core {
 		}
 	}
 
-	// public static async getUserSeedBlockByUsername(
-	// 	username: string,
-	// 	domainUrl: string,
-	// ): Promise<ISeedBlock | undefined> {
+	public async getAccountSeedBlockUnauthenticated(
+		accountSeedBlockMessage: IGetAccountSeedBlockUnauthenticatedMessage,
+		hostingProviderAddresses: string[],
+	): Promise<ISeedBlock | undefined> {
+		const response = await this.http.post(
+			`${hostingProviderAddresses[0]}/api/v1/account/seed/get?auth=false`,
+			accountSeedBlockMessage,
+		)
+		if (response.status === 404 || !response.ok) {
+			return undefined
+		}
 
-	// }
+		const seedBlock: ISeedBlock | undefined = await response.json()
+		return seedBlock
+	}
+
+	public async getAccountSeedBlockByUsernameUnauthenticated(
+		domainName: string,
+	): Promise<ISeedBlock | undefined> {
+		const nameServer: IDnsProvider | undefined =
+			await Core.getNameServerByDomain(domainName)
+		if (!nameServer) {
+			throw new Error('Name server not found')
+		}
+
+		const dnsRecordMessage: IGetDnsRecordUnauthenticatedMessage = {
+			content: { domainName },
+		}
+
+		const dnsRecord: IDnsRecord | undefined =
+			await this.getDnsRecordUnauthenticated(
+				dnsRecordMessage,
+				nameServer.nameServerAddress[0],
+			)
+
+		if (!dnsRecord) {
+			throw new Error('DNS record not found')
+		}
+
+		const accountSeedBlockMessage: IGetAccountSeedBlockUnauthenticatedMessage =
+			{
+				content: { accountPublicKey: dnsRecord.accountPublicKey },
+			}
+
+		return await this.getAccountSeedBlockUnauthenticated(
+			accountSeedBlockMessage,
+			dnsRecord.hostingProviderAddresses,
+		)
+	}
+
+	public async createAccountSeedBlock(
+		seedBlock: ISeedBlock,
+		hostingProviderAddresses: string[],
+	): Promise<ISeedBlock | undefined> {
+		const seedBlockMessage: ICreateAccountSeedBlockMessage = {
+			content: { seedBlock: seedBlock },
+		}
+
+		const response = await this.http.post(
+			`${hostingProviderAddresses[0]}/api/v1/account/seed/create`,
+			seedBlockMessage,
+		)
+		if (!response.ok) {
+			return undefined
+		}
+		const seedBlockFromServer: ISeedBlock | undefined = await response.json()
+		return seedBlockFromServer
+	}
 
 	public async getAccountProviders(): Promise<void> {}
 	public async getUsername(): Promise<void> {}

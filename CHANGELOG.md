@@ -1,3 +1,30 @@
+## 0.8.0 (Mar 1, 2025)
+
+### Account
+
+- **getDnsRecordUnauthenticated**: Get DNS Record without authentication ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **login**: Account login by getting seed block from account hosting provider and getting block private key from user ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **signup**: Initialize account and create seed block in account hosting provider ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **generateUnathenticatedMessage**: Generate unauthenticated messages ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **signUnauthenticatedMessage**: Sign unauthenticated messages ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getDnsRecordUnauthenticated**: Get DNS record without authentication ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getAccountSeedBlockUnauthenticated**: Get account seed block without authentication ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **getAccountSeedBlockByUsernameUnauthenticated**: Get account seed block by account name without authentication ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createAccountSeedBlock**: Create account seed block in the account hosting provider server ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Models
+
+- **IUnauthenticatedMessage**: Unauthentication Message without metadata and seed block, header is optional. ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetDnsRecordUnauthenticatedMessage**: Get DNS record unauthenticated message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetAccountSeedBlockContent**: Get DNS record unauthenticated content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetAccountSeedBlockMessage**: Get Account seed block message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetAccountSeedBlockUnauthenticatedMessage**: Get Account seed block unauthenticated message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateAccountSeedBlockMessage**: Create Account seed block message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateAccountSeedBlockContent**: Create Account seed block content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.7.1 (Feb 28, 2025)
 
 ### Core

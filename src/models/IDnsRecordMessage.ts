@@ -1,5 +1,5 @@
 import { IDnsRecord } from './IDnsRecord'
-import { IMessage } from './IMessage'
+import { IMessage, IUnauthenticatedMessage } from './IMessage'
 import { IMessageHeader } from './IMessageHeader'
 import { IMessageMetadata } from './IMessageMetadata'
 
@@ -11,6 +11,11 @@ export interface IGetDnsRecordMessage extends IMessage {
 	header: IMessageHeader
 	content: IGetDnsRecordContent
 	metadata: IMessageMetadata
+}
+
+export interface IGetDnsRecordUnauthenticatedMessage
+	extends IUnauthenticatedMessage {
+	content: IGetDnsRecordContent
 }
 
 export interface ICreateDnsRecordContent {
