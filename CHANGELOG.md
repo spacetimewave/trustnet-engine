@@ -1,3 +1,13 @@
+## 0.8.2 (Mar 2, 2025)
+
+### Account
+
+- **signup**: Create domain name when signing up ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **createDnsRecord**: The dns provider returns the created dns record back ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.8.1 (Mar 1, 2025)
 
 ### Account

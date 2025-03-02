@@ -242,6 +242,9 @@ describe('Account module test suite', () => {
 		const core = new Core()
 		const account = new Account(core)
 		// Mocking
+		const createDnsRecord = jest.fn().mockImplementation(async () => ({})) // It should return a dns record (but for this case an empty object is enough)
+		jest.spyOn(core, 'createDnsRecord').mockImplementation(createDnsRecord)
+
 		const createAccountSeedBlock = jest
 			.fn()
 			.mockImplementation(async () => ({})) // It should return a seed block (but for this case an empty object is enough)
@@ -250,7 +253,7 @@ describe('Account module test suite', () => {
 			.mockImplementation(createAccountSeedBlock)
 
 		// Test
-		await account.signup(['https://hosting.provider.com'])
+		await account.signup('username.stw', ['https://hosting.provider.com'])
 		const verification = await account.verifySeedBlock()
 		expect(verification).toEqual(true)
 	})

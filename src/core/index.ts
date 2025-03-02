@@ -352,13 +352,13 @@ export class Core {
 	public async createDnsRecord(
 		dnsRecordMessage: ICreateDnsRecordMessage,
 		nameServerAddress: string,
-	): Promise<void> {
+	): Promise<IDnsRecord> {
 		const response = await this.http.post(
 			`${nameServerAddress}/api/v1/dns/record/create`,
 			dnsRecordMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
-			return
+			return await response.json()
 		} else {
 			throw new Error('Failed to create domain name entry')
 		}

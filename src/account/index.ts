@@ -75,8 +75,15 @@ export class Account {
 		this.accountBlocks = []
 	}
 
-	async signup(hostingProviderAddresses: string[]) {
+	async signup(domainName: string, hostingProviderAddresses: string[]) {
 		const { accountKeyPair, blockKeyPair } = await this.init()
+		const dnsRecord = await this.createDnsRecord(
+			domainName,
+			hostingProviderAddresses,
+		)
+		if (dnsRecord === undefined) {
+			throw new Error('Could not create domain name')
+		}
 		const seedBlock = await this.core.createAccountSeedBlock(
 			this.seedBlock!,
 			hostingProviderAddresses,
@@ -312,7 +319,7 @@ export class Account {
 		domainName: string,
 		hostingProviderAddresses: string[],
 		blockPrivateKey?: string,
-	): Promise<void> {
+	): Promise<IDnsRecord> {
 		if (!this.isAccountInitialized()) {
 			throw new Error('Account not initialized')
 		}

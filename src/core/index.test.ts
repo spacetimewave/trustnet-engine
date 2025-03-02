@@ -305,6 +305,7 @@ describe('Core module test suite', () => {
 		const httpPost = jest.fn().mockImplementation(async () => ({
 			ok: true,
 			status: 201,
+			json: async () => dnsRecord,
 		}))
 		jest.spyOn(httpModule, 'post').mockImplementation(httpPost)
 		// Test
