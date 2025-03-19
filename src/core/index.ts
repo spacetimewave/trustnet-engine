@@ -186,6 +186,17 @@ export class Core {
 		)
 	}
 
+	// Verifies if the block private key matches with the block public key of the seed block
+	// This is used to verify if the block private key is valid (i.e. used for logins)
+	public static async verifyBlockPrivateKeyWithSeedBlock(
+		blockPrivateKey: string,
+		seedBlock: ISeedBlock,
+	): Promise<boolean> {
+		const message = 'message'
+		const signature = await this.sign(message, blockPrivateKey)
+		return await this.verify(message, signature, seedBlock.public_key)
+	}
+
 	public static async generateMessageHeader(
 		content: any,
 		address: string,

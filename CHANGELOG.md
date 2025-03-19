@@ -2,6 +2,16 @@
 
 ### Account
 
+- **login**: Returns true if success and false otherwise ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **verifyBlockPrivateKeyWithSeedBlock**: Verify if block private key matches the block public key from the seed block ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.8.2 (Mar 2, 2025)
+
+### Account
+
 - **signup**: Create domain name when signing up ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
 
 ### Core

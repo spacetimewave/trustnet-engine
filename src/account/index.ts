@@ -61,18 +61,36 @@ export class Account {
 		}
 	}
 
-	async login(domainName: string, blockPrivateKeyPair: string) {
-		const seedBlock =
-			await this.core.getAccountSeedBlockByUsernameUnauthenticated(domainName)
+	async login(
+		domainName: string,
+		blockPrivateKeyPair: string,
+	): Promise<boolean> {
+		try {
+			const seedBlock =
+				await this.core.getAccountSeedBlockByUsernameUnauthenticated(domainName)
 
-		if (seedBlock === undefined) {
-			throw new Error('Seed block not found')
+			if (seedBlock === undefined) {
+				throw new Error('Seed block not found')
+			}
+
+			if (
+				(await Core.verifyBlockPrivateKeyWithSeedBlock(
+					blockPrivateKeyPair,
+					seedBlock,
+				)) === false
+			) {
+				throw new Error('Block Private Key does not match seed block')
+			}
+
+			this.accountPublicKey = seedBlock.address
+			this.blockPublicKey = seedBlock.public_key
+			this.blockPrivateKey = blockPrivateKeyPair
+			this.seedBlock = seedBlock
+			this.accountBlocks = []
+			return true
+		} catch (error) {
+			return false
 		}
-		this.accountPublicKey = seedBlock.address
-		this.blockPublicKey = seedBlock.public_key
-		this.blockPrivateKey = blockPrivateKeyPair
-		this.seedBlock = seedBlock
-		this.accountBlocks = []
 	}
 
 	async signup(domainName: string, hostingProviderAddresses: string[]) {

@@ -77,6 +77,35 @@ describe('Core module test suite', () => {
 		expect(await Core.verifySeedBlockSignature(signedSeedBlock)).toEqual(true)
 	})
 
+	it('Verify Block Private Key with Seed Block Unit Test', async () => {
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		expect(
+			await Core.verifyBlockPrivateKeyWithSeedBlock(
+				blockPrivateKey,
+				signedSeedBlock,
+			),
+		).toEqual(true)
+	})
+
 	it('Block Unit Test', async () => {
 		const accountkeyPair = await Core.generateSignatureKeyPair()
 		const accountPublicKey = accountkeyPair.publicKey
