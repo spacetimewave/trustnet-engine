@@ -1,3 +1,32 @@
+## 0.10.0 (Mar 24, 2025)
+
+### Account
+
+- **getHostingProvidersFromMarketplaceUnauthenticated**: Gets Hosting providers from a marketplace based on a search string ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createHostingProviderInMarketplace**: Creates a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **uploadHostingProviderInMarketplace**: Updates a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteHostingProviderInMarketplace**: Deletes a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **getHostingProvidersFromMarketplaceUnauthenticated**: Gets Hosting providers from a marketplace based on a search string ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **addHostingProviderToMarketplace**: Creates a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateHostingProviderToMarketplace**: Updates a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteHostingProviderInMarketplace**: Deletes a Hosting provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Models
+
+- **IHostingProvider**: Hosting provider object ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetHostingProvidersFromMarketplaceContent**: Get Hosting providers from marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetHostingProvidersFromMarketplaceMessage**: Get Hosting providers from marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetHostingProvidersFromMarketplaceUnauthenticatedMessage**: Get Hosting providers from marketplace Unauthenticated Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateHostingProviderInMarketplaceContent**: Create Hosting provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateHostingProviderInMarketplaceMessage**: Create Hosting provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IUpdateHostingProviderInMarketplaceContent**: Update Hosting provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IUpdateHostingProviderInMarketplaceMessage**: Update Hosting provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDeleteHostingProviderInMarketplaceContent**: Delete Hosting provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDeleteHostingProviderInMarketplaceMessage**: Delete Hosting provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
 ## 0.9.0 (Mar 24, 2025)
 
 ### Account

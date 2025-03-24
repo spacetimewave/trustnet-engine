@@ -14,6 +14,12 @@ import {
 	IDeleteDnsRecordMessage,
 	ICreateDnsRecordContent,
 } from '../models/IDnsRecordMessage'
+import {
+	ICreateHostingProviderInMarketplaceMessage,
+	IDeleteHostingProviderInMarketplaceMessage,
+	IGetHostingProvidersFromMarketplaceMessage,
+	IUpdateHostingProviderInMarketplaceMessage,
+} from '../models/IHostingMarketplaceMessage'
 import { ISeedBlock } from '../models/ISeedBlock'
 
 describe('Core module test suite', () => {
@@ -964,6 +970,353 @@ describe('Core module test suite', () => {
 			expect(dnsProvidersResponse).toHaveProperty(
 				'nameServerAddress',
 				nameServerAddress,
+			)
+		}
+	})
+
+	it('Get Hosting Provider From Marketplace Test', async () => {
+		// Initializations
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const search = '.stw'
+		const getHostingProviderFromMarketplaceContent = {
+			search,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			getHostingProviderFromMarketplaceContent,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedHostingProvidersMessage: IGetHostingProvidersFromMarketplaceMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				getHostingProviderFromMarketplaceContent,
+				messageMetadata,
+			)
+		const signedHostingProvidersMessage: IGetHostingProvidersFromMarketplaceMessage =
+			await Core.signMessage(unsignedHostingProvidersMessage, blockPrivateKey)
+
+		// Mocking
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingName = 'spacetimewave'
+		const hostingServerAddress = [
+			'http://localhost:3000',
+			'https://dns.spacetimewave.com',
+		]
+		const hostingProviderExpectedResponse = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddress,
+		}
+		const httpGet = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => hostingProviderExpectedResponse,
+		}))
+
+		jest.spyOn(httpModule, 'post').mockImplementation(httpGet)
+		// Test
+		const dnsProvidersResponse =
+			await core.getHostingProvidersFromMarketplaceUnauthenticated(
+				signedHostingProvidersMessage,
+				'http://marketplace:3000',
+			)
+
+		expect(dnsProvidersResponse).toBeDefined()
+		if (dnsProvidersResponse) {
+			expect(dnsProvidersResponse).toHaveProperty(
+				'ownerPublicAddress',
+				ownerPublicAddress,
+			)
+			expect(dnsProvidersResponse).toHaveProperty('hostingName', hostingName)
+			expect(dnsProvidersResponse).toHaveProperty(
+				'hostingServerAddress',
+				hostingServerAddress,
+			)
+		}
+	})
+
+	it('Create Hosting Provider From Marketplace Test', async () => {
+		// Initializations
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingName = 'spacetimewave'
+		const hostingServerAddresses = [
+			'http://localhost:3000',
+			'https://dns.spacetimewave.com',
+		]
+		const createHostingProviderFromMarketplaceContent = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			createHostingProviderFromMarketplaceContent,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedHostingProvidersMessage: ICreateHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				createHostingProviderFromMarketplaceContent,
+				messageMetadata,
+			)
+		const signedHostingProvidersMessage: ICreateHostingProviderInMarketplaceMessage =
+			await Core.signMessage(unsignedHostingProvidersMessage, blockPrivateKey)
+
+		// Mocking
+		const hostingProviderExpectedResponse = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const httpGet = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => hostingProviderExpectedResponse,
+		}))
+
+		jest.spyOn(httpModule, 'post').mockImplementation(httpGet)
+		// Test
+		const dnsProvidersResponse = await core.addHostingProviderToMarketplace(
+			signedHostingProvidersMessage,
+			'http://marketplace:3000',
+		)
+
+		expect(dnsProvidersResponse).toBeDefined()
+		if (dnsProvidersResponse) {
+			expect(dnsProvidersResponse).toHaveProperty(
+				'ownerPublicAddress',
+				ownerPublicAddress,
+			)
+			expect(dnsProvidersResponse).toHaveProperty('hostingName', hostingName)
+			expect(dnsProvidersResponse).toHaveProperty(
+				'hostingServerAddresses',
+				hostingServerAddresses,
+			)
+		}
+	})
+
+	it('Update Hosting Provider From Marketplace Test', async () => {
+		// Initializations
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingName = 'spacetimewave'
+		const hostingServerAddresses = [
+			'http://localhost:3000',
+			'https://dns.spacetimewave.com',
+		]
+		const updateHostingProviderFromMarketplaceContent = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			updateHostingProviderFromMarketplaceContent,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedHostingProvidersMessage: IUpdateHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				updateHostingProviderFromMarketplaceContent,
+				messageMetadata,
+			)
+		const signedHostingProvidersMessage: IUpdateHostingProviderInMarketplaceMessage =
+			await Core.signMessage(unsignedHostingProvidersMessage, blockPrivateKey)
+
+		// Mocking
+		const hostingProviderExpectedResponse = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const httpGet = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => hostingProviderExpectedResponse,
+		}))
+
+		jest.spyOn(httpModule, 'post').mockImplementation(httpGet)
+		// Test
+		const dnsProvidersResponse = await core.updateHostingProviderToMarketplace(
+			signedHostingProvidersMessage,
+			'http://marketplace:3000',
+		)
+
+		expect(dnsProvidersResponse).toBeDefined()
+		if (dnsProvidersResponse) {
+			expect(dnsProvidersResponse).toHaveProperty(
+				'ownerPublicAddress',
+				ownerPublicAddress,
+			)
+			expect(dnsProvidersResponse).toHaveProperty('hostingName', hostingName)
+			expect(dnsProvidersResponse).toHaveProperty(
+				'hostingServerAddresses',
+				hostingServerAddresses,
+			)
+		}
+	})
+
+	it('Delete Hosting Provider From Marketplace Test', async () => {
+		// Initializations
+		const httpModule = new http()
+		const core = new Core(httpModule)
+
+		const accountkeyPair = await Core.generateSignatureKeyPair()
+		const accountPublicKey = accountkeyPair.publicKey
+		const accountPrivateKey = accountkeyPair.privateKey
+
+		const blockKeyPair = await Core.generateSignatureKeyPair()
+		const blockPublicKey = blockKeyPair.publicKey
+		const blockPrivateKey = blockKeyPair.privateKey
+
+		const unsignedSeedBlock = await Core.generateSeedBlock(
+			accountPublicKey,
+			blockPublicKey,
+			1,
+			1,
+		)
+
+		const signedSeedBlock = await Core.signSeedBlock(
+			unsignedSeedBlock,
+			accountPrivateKey,
+		)
+
+		const hostingName = 'spacetimewave'
+
+		const deleteHostingProviderFromMarketplaceContent = {
+			hostingName,
+		}
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			deleteHostingProviderFromMarketplaceContent,
+			accountPublicKey,
+			blockPublicKey,
+			1,
+		)
+
+		const messageMetadata = Core.generateMessageMetadata(signedSeedBlock)
+		const unsignedHostingProvidersMessage: IDeleteHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				unsignedMessageHeader,
+				deleteHostingProviderFromMarketplaceContent,
+				messageMetadata,
+			)
+		const signedHostingProvidersMessage: IDeleteHostingProviderInMarketplaceMessage =
+			await Core.signMessage(unsignedHostingProvidersMessage, blockPrivateKey)
+
+		// Mocking
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingServerAddresses = [
+			'http://localhost:3000',
+			'https://dns.spacetimewave.com',
+		]
+		const hostingProviderExpectedResponse = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const httpGet = jest.fn().mockImplementation(async () => ({
+			ok: true,
+			status: 200,
+			json: async () => hostingProviderExpectedResponse,
+		}))
+
+		jest.spyOn(httpModule, 'post').mockImplementation(httpGet)
+		// Test
+		const dnsProvidersResponse = await core.deleteHostingProviderToMarketplace(
+			signedHostingProvidersMessage,
+			'http://marketplace:3000',
+		)
+
+		expect(dnsProvidersResponse).toBeDefined()
+		if (dnsProvidersResponse) {
+			expect(dnsProvidersResponse).toHaveProperty(
+				'ownerPublicAddress',
+				ownerPublicAddress,
+			)
+			expect(dnsProvidersResponse).toHaveProperty('hostingName', hostingName)
+			expect(dnsProvidersResponse).toHaveProperty(
+				'hostingServerAddresses',
+				hostingServerAddresses,
 			)
 		}
 	})

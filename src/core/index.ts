@@ -28,6 +28,13 @@ import {
 	IGetDnsProvidersFromMarketplaceUnauthenticatedMessage,
 	IUpdateDnsProviderInMarketplaceMessage,
 } from '../models/IDnsMarketplaceMessage'
+import {
+	ICreateHostingProviderInMarketplaceMessage,
+	IDeleteHostingProviderInMarketplaceMessage,
+	IGetHostingProvidersFromMarketplaceUnauthenticatedMessage,
+	IUpdateHostingProviderInMarketplaceMessage,
+} from '../models/IHostingMarketplaceMessage'
+import { IHostingProvider } from '../models/IHostingProvider'
 
 export class Core {
 	public http: http
@@ -517,7 +524,7 @@ export class Core {
 		marketplaceAddress: string,
 	): Promise<IDnsProvider> {
 		const response = await this.http.post(
-			`${marketplaceAddress}/api/v1/dns/marketplace/create`,
+			`${marketplaceAddress}/api/v1/dns/marketplace/update`,
 			dnsProviderMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
@@ -532,8 +539,70 @@ export class Core {
 		marketplaceAddress: string,
 	): Promise<IDnsProvider> {
 		const response = await this.http.post(
-			`${marketplaceAddress}/api/v1/dns/marketplace/create`,
+			`${marketplaceAddress}/api/v1/dns/marketplace/delete`,
 			dnsProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async getHostingProvidersFromMarketplaceUnauthenticated(
+		hostingProviderMessage: IGetHostingProvidersFromMarketplaceUnauthenticatedMessage,
+		marketplaceAddress: string,
+	): Promise<IHostingProvider | undefined> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/hosting/marketplace/get`,
+			hostingProviderMessage,
+		)
+
+		if (response.status === 404 || !response.ok) {
+			return undefined
+		}
+
+		const dnsRecord: IHostingProvider = await response.json()
+		return dnsRecord
+	}
+
+	public async addHostingProviderToMarketplace(
+		hostingProviderMessage: ICreateHostingProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IHostingProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/hosting/marketplace/create`,
+			hostingProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async updateHostingProviderToMarketplace(
+		hostingProviderMessage: IUpdateHostingProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IHostingProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/hosting/marketplace/update`,
+			hostingProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async deleteHostingProviderToMarketplace(
+		hostingProviderMessage: IDeleteHostingProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IHostingProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/hosting/marketplace/delete`,
+			hostingProviderMessage,
 		)
 		if (response.status === 201 || response.status === 200) {
 			return await response.json()

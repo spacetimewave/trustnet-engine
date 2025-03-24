@@ -27,6 +27,17 @@ import {
 	IUpdateDnsProviderInMarketplaceContent,
 	IUpdateDnsProviderInMarketplaceMessage,
 } from '../models/IDnsMarketplaceMessage'
+import {
+	ICreateHostingProviderInMarketplaceContent,
+	ICreateHostingProviderInMarketplaceMessage,
+	IDeleteHostingProviderInMarketplaceContent,
+	IDeleteHostingProviderInMarketplaceMessage,
+	IGetHostingProvidersFromMarketplaceContent,
+	IGetHostingProvidersFromMarketplaceUnauthenticatedMessage,
+	IUpdateHostingProviderInMarketplaceContent,
+	IUpdateHostingProviderInMarketplaceMessage,
+} from '../models/IHostingMarketplaceMessage'
+import { IHostingProvider } from '../models/IHostingProvider'
 
 export class Account {
 	private core: Core
@@ -598,6 +609,145 @@ export class Account {
 				messageMetadata,
 			)
 		return await this.core.deleteDnsProviderToMarketplace(
+			deleteDnsProvidersFromMarketplaceMessage,
+			marketplaceAddress,
+		)
+	}
+
+	public async getHostingProvidersFromMarketplaceUnauthenticated(
+		search: string,
+		marketplaceAddress: string,
+	): Promise<IHostingProvider | undefined> {
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		const getHostingProvidersFromMarketplaceContent: IGetHostingProvidersFromMarketplaceContent =
+			{
+				search: search,
+			}
+
+		const getHostingProvidersFromMarketplaceMessage: IGetHostingProvidersFromMarketplaceUnauthenticatedMessage =
+			Core.generateUnathenticatedMessage(
+				getHostingProvidersFromMarketplaceContent,
+			)
+		return await this.core.getHostingProvidersFromMarketplaceUnauthenticated(
+			getHostingProvidersFromMarketplaceMessage,
+			marketplaceAddress,
+		)
+	}
+
+	public async createHostingProviderInMarketplace(
+		hostingProvider: IHostingProvider,
+		marketplaceAddress: string,
+		blockPrivateKey?: string,
+	): Promise<IHostingProvider | undefined> {
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		if (blockPrivateKey === undefined && !this.isBlockPrivateKeyInitialized()) {
+			throw new Error('Private key not initialized')
+		}
+
+		const createDnsProvidersFromMarketplaceContent: ICreateHostingProviderInMarketplaceContent =
+			{
+				hostingProvider,
+			}
+		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			createDnsProvidersFromMarketplaceContent,
+			this.accountPublicKey!,
+			this.blockPublicKey!,
+		)
+		const signedMessageHeader = await Core.signMessageHeader(
+			unsignedMessageHeader,
+			blockPrivateKey ?? this.blockPrivateKey!,
+		)
+
+		const createDnsProvidersFromMarketplaceMessage: ICreateHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				signedMessageHeader,
+				createDnsProvidersFromMarketplaceContent,
+				messageMetadata,
+			)
+		return await this.core.addHostingProviderToMarketplace(
+			createDnsProvidersFromMarketplaceMessage,
+			marketplaceAddress,
+		)
+	}
+
+	public async updateHostingProviderInMarketplace(
+		hostingProvider: IHostingProvider,
+		marketplaceAddress: string,
+		blockPrivateKey?: string,
+	): Promise<IHostingProvider | undefined> {
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		if (blockPrivateKey === undefined && !this.isBlockPrivateKeyInitialized()) {
+			throw new Error('Private key not initialized')
+		}
+
+		const updateDnsProvidersFromMarketplaceContent: IUpdateHostingProviderInMarketplaceContent =
+			{
+				hostingProvider,
+			}
+		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			updateDnsProvidersFromMarketplaceContent,
+			this.accountPublicKey!,
+			this.blockPublicKey!,
+		)
+		const signedMessageHeader = await Core.signMessageHeader(
+			unsignedMessageHeader,
+			blockPrivateKey ?? this.blockPrivateKey!,
+		)
+
+		const updateDnsProvidersFromMarketplaceMessage: IUpdateHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				signedMessageHeader,
+				updateDnsProvidersFromMarketplaceContent,
+				messageMetadata,
+			)
+		return await this.core.updateHostingProviderToMarketplace(
+			updateDnsProvidersFromMarketplaceMessage,
+			marketplaceAddress,
+		)
+	}
+
+	public async deleteHostingProviderInMarketplace(
+		hostingName: string,
+		marketplaceAddress: string,
+		blockPrivateKey?: string,
+	): Promise<IHostingProvider | undefined> {
+		if (!this.isAccountInitialized()) {
+			throw new Error('Account not initialized')
+		}
+		if (blockPrivateKey === undefined && !this.isBlockPrivateKeyInitialized()) {
+			throw new Error('Private key not initialized')
+		}
+
+		const updateDnsProvidersFromMarketplaceContent: IDeleteHostingProviderInMarketplaceContent =
+			{
+				hostingName,
+			}
+		const messageMetadata = Core.generateMessageMetadata(this.seedBlock!)
+		const unsignedMessageHeader = await Core.generateMessageHeader(
+			updateDnsProvidersFromMarketplaceContent,
+			this.accountPublicKey!,
+			this.blockPublicKey!,
+		)
+		const signedMessageHeader = await Core.signMessageHeader(
+			unsignedMessageHeader,
+			blockPrivateKey ?? this.blockPrivateKey!,
+		)
+
+		const deleteDnsProvidersFromMarketplaceMessage: IDeleteHostingProviderInMarketplaceMessage =
+			Core.generateMessage(
+				signedMessageHeader,
+				updateDnsProvidersFromMarketplaceContent,
+				messageMetadata,
+			)
+		return await this.core.deleteHostingProviderToMarketplace(
 			deleteDnsProvidersFromMarketplaceMessage,
 			marketplaceAddress,
 		)

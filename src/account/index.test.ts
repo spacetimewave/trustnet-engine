@@ -1,6 +1,7 @@
 import { Account } from '.'
 import { Core } from '../core'
 import { IDnsProvider } from '../models/IDnsProvider'
+import { IHostingProvider } from '../models/IHostingProvider'
 // import { ISeedBlock } from '../models/ISeedBlock'
 
 describe('Account module test suite', () => {
@@ -359,6 +360,113 @@ describe('Account module test suite', () => {
 		)
 
 		expect(updateDnsProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Get Hosting Providers in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		await account.init()
+		// Mock the response
+		const search = 'search any hosting provider'
+		const getHostingProviderMock = jest.fn().mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'getHostingProvidersFromMarketplaceUnauthenticated')
+			.mockImplementation(getHostingProviderMock)
+		await account.getHostingProvidersFromMarketplaceUnauthenticated(
+			search,
+			'http://localhost:3000', // Marketplace address
+		)
+
+		expect(getHostingProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Create Hosting Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingName = 'spacetimewave'
+		const hostingServerAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+		]
+		const hostingProvider: IHostingProvider = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const createHostingProviderMock = jest
+			.fn()
+			.mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'addHostingProviderToMarketplace')
+			.mockImplementation(createHostingProviderMock)
+		await account.createHostingProviderInMarketplace(
+			hostingProvider,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(createHostingProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Update Hosting Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const hostingName = 'spacetimewave'
+		const hostingServerAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+		]
+		const hostingProvider: IHostingProvider = {
+			ownerPublicAddress,
+			hostingName,
+			hostingServerAddresses,
+		}
+		const updateHostingProviderMock = jest
+			.fn()
+			.mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'updateHostingProviderToMarketplace')
+			.mockImplementation(updateHostingProviderMock)
+		await account.updateHostingProviderInMarketplace(
+			hostingProvider,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(updateHostingProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Delete Hosting Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const hostingName = 'spacetimewave'
+		const deleteHostingProviderMock = jest
+			.fn()
+			.mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'deleteHostingProviderToMarketplace')
+			.mockImplementation(deleteHostingProviderMock)
+		await account.deleteHostingProviderInMarketplace(
+			hostingName,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(deleteHostingProviderMock).toHaveBeenCalled()
 		expect(true).toEqual(true)
 	})
 })
