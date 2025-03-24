@@ -22,6 +22,12 @@ import {
 	ICreateAccountSeedBlockMessage,
 	IGetAccountSeedBlockUnauthenticatedMessage,
 } from '../models/IAccountMessage'
+import {
+	ICreateDnsProviderInMarketplaceMessage,
+	IDeleteDnsProviderInMarketplaceMessage,
+	IGetDnsProvidersFromMarketplaceUnauthenticatedMessage,
+	IUpdateDnsProviderInMarketplaceMessage,
+} from '../models/IDnsMarketplaceMessage'
 
 export class Core {
 	public http: http
@@ -472,6 +478,68 @@ export class Core {
 		}
 		const seedBlockFromServer: ISeedBlock | undefined = await response.json()
 		return seedBlockFromServer
+	}
+
+	public async getDnsProvidersFromMarketplaceUnauthenticated(
+		dnsProviderMessage: IGetDnsProvidersFromMarketplaceUnauthenticatedMessage,
+		marketplaceAddress: string,
+	): Promise<IDnsProvider | undefined> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/dns/marketplace/get`,
+			dnsProviderMessage,
+		)
+
+		if (response.status === 404 || !response.ok) {
+			return undefined
+		}
+
+		const dnsRecord: IDnsProvider = await response.json()
+		return dnsRecord
+	}
+
+	public async addDnsProviderToMarketplace(
+		dnsProviderMessage: ICreateDnsProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IDnsProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/dns/marketplace/create`,
+			dnsProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async updateDnsProviderToMarketplace(
+		dnsProviderMessage: IUpdateDnsProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IDnsProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/dns/marketplace/create`,
+			dnsProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
+	}
+
+	public async deleteDnsProviderToMarketplace(
+		dnsProviderMessage: IDeleteDnsProviderInMarketplaceMessage,
+		marketplaceAddress: string,
+	): Promise<IDnsProvider> {
+		const response = await this.http.post(
+			`${marketplaceAddress}/api/v1/dns/marketplace/create`,
+			dnsProviderMessage,
+		)
+		if (response.status === 201 || response.status === 200) {
+			return await response.json()
+		} else {
+			throw new Error('Failed to create domain name entry')
+		}
 	}
 
 	public async getAccountProviders(): Promise<void> {}

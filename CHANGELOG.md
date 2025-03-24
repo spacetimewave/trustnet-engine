@@ -1,4 +1,33 @@
-## 0.8.2 (Mar 2, 2025)
+## 0.9.0 (Mar 24, 2025)
+
+### Account
+
+- **getDnsProvidersFromMarketplaceUnauthenticated**: Gets DNS providers from a marketplace based on a search string ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **createDnsProviderInMarketplace**: Creates a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **uploadDnsProviderInMarketplace**: Updates a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteDnsProviderInMarketplace**: Deletes a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Core
+
+- **getDnsProvidersFromMarketplaceUnauthenticated**: Gets DNS providers from a marketplace based on a search string ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **addDnsProviderToMarketplace**: Creates a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **updateDnsProviderToMarketplace**: Updates a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **deleteDnsProviderInMarketplace**: Deletes a DNS provider in a marketplace ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+### Models
+
+- **IDnsProvider**: Add dns owner public address to dns provider ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetDnsProvidersFromMarketplaceContent**: Get DNS providers from marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetDnsProvidersFromMarketplaceMessage**: Get DNS providers from marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IGetDnsProvidersFromMarketplaceUnauthenticatedMessage**: Get DNS providers from marketplace Unauthenticated Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateDnsProviderInMarketplaceContent**: Create DNS provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **ICreateDnsProviderInMarketplaceMessage**: Create DNS provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IUpdateDnsProviderInMarketplaceContent**: Update DNS provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IUpdateDnsProviderInMarketplaceMessage**: Update DNS provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDeleteDnsProviderInMarketplaceContent**: Delete DNS provider in marketplace Content ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+- **IDeleteDnsProviderInMarketplaceMessage**: Delete DNS provider in marketplace Message ([@javierhersan](https://github.com/javierhersan) in [#00000](https://github.com/spacetimewave/trustnet-engine))
+
+## 0.8.3 (Mar 2, 2025)
 
 ### Account
 

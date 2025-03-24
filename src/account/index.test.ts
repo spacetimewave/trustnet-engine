@@ -1,5 +1,6 @@
 import { Account } from '.'
 import { Core } from '../core'
+import { IDnsProvider } from '../models/IDnsProvider'
 // import { ISeedBlock } from '../models/ISeedBlock'
 
 describe('Account module test suite', () => {
@@ -188,6 +189,8 @@ describe('Account module test suite', () => {
 		const domainName = 'example.stw'
 		const nameServer = await Account.getNameServerByDomain(domainName)
 		expect(nameServer).toEqual({
+			ownerPublicAddress:
+				'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2',
 			domainExtension: 'stw',
 			nameServerAddress: [
 				'http://localhost:3000',
@@ -256,5 +259,106 @@ describe('Account module test suite', () => {
 		await account.signup('username.stw', ['https://hosting.provider.com'])
 		const verification = await account.verifySeedBlock()
 		expect(verification).toEqual(true)
+	})
+
+	it('Get Dns Providers in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		await account.init()
+		// Mock the response
+		const search = 'search any dns provider'
+		const getDnsProviderMock = jest.fn().mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'getDnsProvidersFromMarketplaceUnauthenticated')
+			.mockImplementation(getDnsProviderMock)
+		await account.getDnsProvidersFromMarketplaceUnauthenticated(
+			search,
+			'http://localhost:3000', // Marketplace address
+		)
+
+		expect(getDnsProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Create Dns Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const domainExtension = '.stw'
+		const hostingProviderAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+		]
+		const dnsProvider: IDnsProvider = {
+			ownerPublicAddress,
+			domainExtension,
+			nameServerAddress: hostingProviderAddresses,
+		}
+		const createDnsProviderMock = jest.fn().mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'addDnsProviderToMarketplace')
+			.mockImplementation(createDnsProviderMock)
+		await account.createDnsProviderInMarketplace(
+			dnsProvider,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(createDnsProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Update Dns Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const ownerPublicAddress =
+			'0x0004002900d9009f007400ce00c40014000400f400ff0044003900ae00d3006100700000009900b2003700ff004f006b004c002900be00900089005a0028002c003b00ff0009009e00a700800018008e00d7002b0097009f002f002e002200d600b300530059008f005e005900d800cd00f0008a00e3002a00d7009b000700d400c2'
+		const domainExtension = '.stw'
+		const hostingProviderAddresses = [
+			'localhost:3000',
+			'hosting.spacetimewave.com',
+		]
+		const dnsProvider: IDnsProvider = {
+			ownerPublicAddress,
+			domainExtension,
+			nameServerAddress: hostingProviderAddresses,
+		}
+		const updateDnsProviderMock = jest.fn().mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'updateDnsProviderToMarketplace')
+			.mockImplementation(updateDnsProviderMock)
+		await account.updateDnsProviderInMarketplace(
+			dnsProvider,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(updateDnsProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
+	})
+
+	it('Delete Dns Provider in Marketplace', async () => {
+		const core = new Core()
+		const account = new Account(core)
+		const { blockKeyPair } = await account.init()
+		// Mock the response
+		const domainExtension = '.stw'
+		const updateDnsProviderMock = jest.fn().mockImplementation(async () => {})
+		jest
+			.spyOn(core, 'deleteDnsProviderToMarketplace')
+			.mockImplementation(updateDnsProviderMock)
+		await account.deleteDnsProviderInMarketplace(
+			domainExtension,
+			'http://localhost:3000', // Marketplace address
+			blockKeyPair.privateKey,
+		)
+
+		expect(updateDnsProviderMock).toHaveBeenCalled()
+		expect(true).toEqual(true)
 	})
 })
